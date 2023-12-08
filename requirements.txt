@@ -1,3 +1,4 @@
 flask
-flask-user
 flask-sqlalchemy
+flask-user==1.0.2.2
+
