@@ -3,7 +3,7 @@
 from flask import Flask, render_template
 from flask_user import login_required, UserManager
 
-from models import db, User, Movie, MovieGenre
+from models import db, User, Movie, MovieGenre, MovieTags
 from read_data import check_and_read_data
 
 # Class-based application configuration
@@ -16,7 +16,6 @@ class ConfigClass(object):
     # Flask-SQLAlchemy settings
     SQLALCHEMY_DATABASE_URI = 'sqlite:///movie_recommender.sqlite'  # File-based SQL database
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # Avoids SQLAlchemy warning
-
     # Flask-User settings
     USER_APP_NAME = "Movie Recommender"  # Shown in and email templates and page footers
     USER_ENABLE_EMAIL = False  # Disable email authentication
@@ -51,12 +50,13 @@ def home_page():
 @login_required  # User must be authenticated
 def movies_page():
     # String-based templates
+    check_and_read_data(db)
 
     # first 10 movies
-    #movies = Movie.query.limit(10).all()
+    movies = Movie.query.limit(10).all()
 
     # only Romance movies
-    movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()
+    #movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()
 
     # only Romance AND Horror movies
     # movies = Movie.query\
