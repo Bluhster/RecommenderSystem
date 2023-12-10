@@ -5,6 +5,7 @@ from models import Movie, MovieGenre, MovieTags
 def check_and_read_data(db):
     # check if we have movies in the database
     # read data if database is empty
+    print("here we are")
     if Movie.query.count() == 0:
         # read movies from csv
         with open('data/movies.csv', newline='', encoding='utf8') as csvfile:
@@ -40,13 +41,11 @@ def check_and_read_data(db):
                         user_id = row[0]
                         movie_id = row[1]
                         timestamp = row[3]
-                        tags = row[2].split('|')  # genres is a list of genres
-                        for tag in tags:  # add each genre to the movie_genre table
-                            movie_tag = MovieTags(movie_id=movie_id, tag=tag)
-                            db.session.add(movie_tag)
+                        movie_tag = MovieTags(movie_id=movie_id, tag=row[2])
+                        db.session.add(movie_tag)
                         db.session.commit()  # save data to database
                     except IntegrityError:
-                        print("Ignoring duplicate movie: " + title)
+                        print("Ignoring duplicate movie: ")
                         db.session.rollback()
                         pass
                 count += 1
