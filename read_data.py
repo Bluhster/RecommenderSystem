@@ -5,7 +5,7 @@ from models import Movie, MovieGenre, MovieTags
 def check_and_read_data(db):
     # check if we have movies in the database
     # read data if database is empty
-    print("here we are")
+    print("check and read data was called")
     if Movie.query.count() == 0:
         # read movies from csv
         with open('data/movies.csv', newline='', encoding='utf8') as csvfile:
@@ -45,7 +45,7 @@ def check_and_read_data(db):
                         db.session.add(movie_tag)
                         db.session.commit()  # save data to database
                     except IntegrityError:
-                        print("Ignoring duplicate movie: ")
+                        #print("Ignoring duplicate movie: ")
                         db.session.rollback()
                         pass
                 count += 1
