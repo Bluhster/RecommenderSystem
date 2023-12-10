@@ -38,5 +38,7 @@ class MovieGenre(db.Model):
 class Tags(db.Model):
     __tablename__= 'movie_tags'
     id = db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
+    tag = db.Column(db.String(255), nullable=False, server_default='')
 
 
