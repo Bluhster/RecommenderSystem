@@ -1,6 +1,6 @@
 import csv
 from sqlalchemy.exc import IntegrityError
-from models import Movie, MovieGenre, MovieTags, MovieLinks#, MovieRatings
+from models import Movie, MovieGenre, MovieTags, MovieLinks, MovieRatings
 
 def check_and_read_data(db):
     # check if we have movies in the database
@@ -39,6 +39,12 @@ def check_and_read_data(db):
                                     tmdb = "https://www.themoviedb.org/movie/" + link_row[2]
                                     movie_links = MovieLinks(movie_id=mov_id2, imdb=imdb, tmdb=tmdb)
                                     db.session.add(movie_links)
+
+                                    mov_id3 = rating_row[1]
+                                    userid = rating_row[0]
+                                    rating = rating_row[2]
+                                    movie_rating = MovieRatings(movie_id=mov_id3, user_id=userid, rating=rating)
+                                    db.session.add(movie_rating)
 
                                     db.session.commit()  # save data to database
                                 except IntegrityError:

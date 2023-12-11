@@ -21,6 +21,10 @@
             <br>
             <a href="{{ l.tmdb }}">Link to review on TMBD</a>
             {% endfor %}
+
+            {% for r in m.ratings %}
+            <p>the rating for the movie "{{m.title}}" was {{r.rating}} by user {{r.user_id}}</p>
+            {% endfor %}
             </div>
               <div class="panel-footer">Rate:
                   <a href="#" class="card-link">1</a>
