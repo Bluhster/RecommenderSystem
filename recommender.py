@@ -53,7 +53,7 @@ def movies_page():
     check_and_read_data(db)
 
     # first 10 movies
-    movies = Movie.query.limit(10).all()
+    movies = Movie.query.limit(100).all()
 
     # only Romance movies
     #movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()

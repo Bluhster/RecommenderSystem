@@ -27,6 +27,9 @@ class Movie(db.Model):
     title = db.Column(db.String(100, collation='NOCASE'), nullable=False, unique=True)
     genres = db.relationship('MovieGenre', backref='movie', lazy=True)
     tags = db.relationship('MovieTags', backref='movie', lazy=True)
+    links = db.relationship('MovieLinks', backref='movie', lazy=True)
+    # user = db.Column(db.Integer, db.ForeignKey('movieRatings.user_id'), nullable=False, lazy = True)
+
 
 
 class MovieGenre(db.Model):
@@ -41,4 +44,17 @@ class MovieTags(db.Model):
     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
     tag = db.Column(db.String(255), nullable=False, server_default='')
 
+class MovieLinks(db.Model):
+    __tablename__= 'movie_links'
+    id = db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
+    imdb = db.Column(db.String(255), nullable=False, server_default='')
+    tmdb = db.Column(db.String(255), nullable=False, server_default='')
+
+# class MovieRatings(db.Model):
+#     __tablename__= 'movie_ratings'
+#     id = db.Column(db.Integer, primary_key=True)
+#     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
+#     user_id = db.Column(db.Integer, nullable=False)
+#     rating = db.Column(db.Float, nullable=False)
 
