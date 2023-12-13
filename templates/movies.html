@@ -32,11 +32,14 @@
                     {% endfor %}
                 </p>
 
-                <b> Tags: </b>
-                {% for t in m.tags %}
-                    <span class="label label-success">{{ t.tag }}</span>
-                {% endfor %}
-                <br><br>
+                {% if m.tags %}
+
+                    <b> Tags: </b>
+                    {% for t in m.tags %}
+                        <span class="label label-success">{{ t.tag }}</span>
+                    {% endfor %}
+                    <br><br>
+                {% endif %}
             <span class="links" color="black">
                 {% for l in m.links %}
                 <a href="{{ l.imdb }}">Link to review on IMDb</a>
