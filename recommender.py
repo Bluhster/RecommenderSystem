@@ -1,6 +1,6 @@
 # Contains parts from: https://flask-user.readthedocs.io/en/latest/quickstart_app.html
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_user import login_required, UserManager
 
 from models import db, User, Movie, MovieGenre, MovieTags
@@ -42,6 +42,7 @@ def initdb_command():
 @app.route('/')
 def home_page():
     # render home.html template
+
     return render_template("home.html")
 
 
@@ -65,6 +66,22 @@ def movies_page():
     #     .limit(10).all()
 
     return render_template("movies.html", movies=movies)
+
+
+@app.route('/filter_genre')
+def filter_genre():
+    all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
+    return render_template("filter_genre.html", all_genres=all_genres)
+
+
+@app.route('/selected_genre')
+def selected_genre():
+    # print(genres_chosen)
+    # genres_chosen = request.args.get("selectedOptions", " ")
+    # genres_chose = request.args.get("selected_genre")
+    # print("dfhsjgdk", genres_chose)
+    # print("AAA", genres_chosen)
+    return render_template("selected_genre.html")
 
 
 # Start development web server

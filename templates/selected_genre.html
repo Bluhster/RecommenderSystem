@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <h2>Selected Genres:</h2>
+
+    <!-- Display selected options from localStorage -->
+    <div id="selectedOptions"></div>
+
+    <script>
+        // Retrieve selected options from localStorage
+        var selectedOptions = JSON.parse(localStorage.getItem('selectedOptions'));
+
+        // Display selected options in the designated area
+        var selectedOptionsElement = document.getElementById('selectedOptions');
+        selectedOptionsElement.innerHTML = 'Selected Options: ' + (selectedOptions ? selectedOptions.join(', ') : 'None');
+    </script>
+
+</body>
+</html>

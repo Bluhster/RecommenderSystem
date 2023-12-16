@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <h2>Choose Your favorite Genre/s:</h2>
+    {% for genre in all_genres %}
+        <label>
+            <input type="checkbox" name={{genre}}> {{genre}}
+        </label><br>
+    {% endfor %}
+
+
+    <button id='button' onclick="showSelectedOptions(this.genre)">Show Selected Options</button>
+
+    <div id="selectedOptions"></div>
+
+    <script>
+        function showSelectedOptions(genre) {
+            // Get all checkboxes
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            // Array to store selected options
+            var selectedOptions = [];
+
+            console.log(genre);
+
+            // Iterate through checkboxes and check if they are checked
+            checkboxes.forEach(function (checkbox) {
+                if (checkbox.checked) {
+                    selectedOptions.push(checkbox.name);
+                }
+            });
+
+            // Display selected options in the designated area
+            var selectedOptionsElement = document.getElementById('selectedOptions');
+            selectedOptionsElement.innerHTML = 'Selected Options: ' + (selectedOptions.length > 0 ? selectedOptions.join(', ') : 'None');
+
+            // Store selected options in localStorage
+            localStorage.setItem('selectedOptions', JSON.stringify(selectedOptions));
+
+            // Redirect to the new page
+            window.location.href = 'selected_genre';
+        }
+    </script>
+
+</body>
+</html>
