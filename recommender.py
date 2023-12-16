@@ -50,7 +50,6 @@ def home_page():
 @login_required  # User must be authenticated
 def movies_page():
     # String-based templates
-    check_and_read_data(db)
 
     # first 10 movies
     movies = Movie.query.limit(100).all()
