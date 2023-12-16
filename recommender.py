@@ -9,9 +9,6 @@ from read_data import check_and_read_data
 # Class-based application configuration
 class ConfigClass(object):
     """ Flask application config """
-    # create database if necessary
-    check_and_read_data(db)
-
     # Flask settings
     SECRET_KEY = 'This is an INSECURE secret!! DO NOT use this in production!!'
 
