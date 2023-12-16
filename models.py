@@ -29,6 +29,8 @@ class Movie(db.Model):
     tags = db.relationship('MovieTags', backref='movie', lazy=True)
     links = db.relationship('MovieLinks', backref='movie', lazy=True)
     ratings = db.relationship('MovieRatings', backref='movie', lazy=True)
+    links = db.relationship('MovieLinks', backref='movie', lazy=True)
+    ratings = db.relationship('MovieRatings', backref='movie', lazy=True)
 
 
 class MovieGenre(db.Model):
