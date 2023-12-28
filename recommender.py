@@ -3,7 +3,7 @@
 from flask import Flask, render_template
 from flask_user import login_required, UserManager
 
-from models import db, User, Movie, MovieGenre, MovieTags
+from models import db, User, Movie, MovieGenre, MovieTags, MovieLinks, MovieRatings
 from read_data import check_and_read_data
 
 # Class-based application configuration
@@ -30,6 +30,31 @@ db.init_app(app)  # initialize database
 db.create_all()  # create database if necessary
 user_manager = UserManager(app, db, User)  # initialize Flask-User management
 
+@app.cli.command('test')
+def test_command():
+    global db
+    # for loop to loop through all movies in movie table in database
+    # collect and average all ratings for each movie 
+    
+    #movies = Movie.query.all()
+    ratings = MovieRatings.query.all()
+    averages_with_ids = [0]*(193609+1)
+    temp_counts = [0]*(193609+1)
+    #averages_with_movies = [0]*len(movies)
+
+    for rating in ratings:
+        averages_with_ids[rating.movie_id] += rating.rating
+        temp_counts[rating.movie_id] += 1
+
+    for i,count in enumerate(temp_counts):
+        if count != 0:
+            averages_with_ids[i] = averages_with_ids[i]/temp_counts[i]
+    
+    # for movie in movies:
+    #     nr_of_ratings = MovieRatings.movie_id.count(movie.id)
+    #     if nr_of_ratings != 0:
+    #         averages_with_ids[movie.id] = averages_with_ids[movie.id]/nr_of_ratings
+    # print(averages_with_ids)
 
 @app.cli.command('initdb')
 def initdb_command():
