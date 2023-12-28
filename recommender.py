@@ -49,12 +49,14 @@ def test_command():
     for i,count in enumerate(temp_counts):
         if count != 0:
             averages_with_ids[i] = averages_with_ids[i]/temp_counts[i]
+        else:
+            averages_with_ids[i] = None
     
     # for movie in movies:
     #     nr_of_ratings = MovieRatings.movie_id.count(movie.id)
     #     if nr_of_ratings != 0:
     #         averages_with_ids[movie.id] = averages_with_ids[movie.id]/nr_of_ratings
-    # print(averages_with_ids)
+    print(averages_with_ids)
 
 @app.cli.command('initdb')
 def initdb_command():
