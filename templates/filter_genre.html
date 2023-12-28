@@ -3,21 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        .mylabel {
+            color: #3f5a36;
+            font-weight: bold;
+            display: block;
+            width: 150px;
+            float: left;
+            }
+    </style>
 </head>
 <body>
 
-    <h2>Choose Your favorite Genre/s:</h2>
-    {% for genre in all_genres %}
-        <label>
-            <input type="checkbox" name={{genre}}> {{genre}}
-        </label><br>
-    {% endfor %}
+
+    <fieldset>
+
+        <legend>Choose Your favorite Genre/s:</legend>
+        {% for genre in all_genres %}
+            <div class= "mylabel">
+                <input type="checkbox" name={{genre}}> {{genre}}
+            </div><br>
+        {% endfor %}
 
 
-    <button id='button' onclick="showSelectedOptions(this.genre)">Show Selected Options</button>
+        <button id='button' onclick="showSelectedOptions(this.genre)">
+            Show Selected Options
+        </button>
 
-    <div id="selectedOptions"></div>
-
+        <div id="selectedOptions"></div>
+    </fieldset>
     <script>
         function showSelectedOptions(genre) {
             // Get all checkboxes
