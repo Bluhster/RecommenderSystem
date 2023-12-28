@@ -1,6 +1,7 @@
 import csv
 from sqlalchemy.exc import IntegrityError
 from models import Movie, MovieGenre, MovieTags, MovieLinks, MovieRatings
+from itertools import islice
 
 def check_and_read_data(db):
     # check if we have movies in the database
@@ -9,6 +10,7 @@ def check_and_read_data(db):
         # read movies from csv
         with open('data/movies.csv', newline='', encoding='utf8') as movies:
             movies = csv.reader(movies, delimiter=',')
+            movies = list(islice(movies, 1000))
             count = 0
             for mov_row in movies:
                 if count > 0:
@@ -34,6 +36,7 @@ def check_and_read_data(db):
         # read movies from csv
         with open('data/tags.csv', newline='', encoding='utf8') as tags:
             tags = csv.reader(tags, delimiter=',')
+            tags = list(islice(tags, 1000))
             count = 0
             for tag_row in tags:
                 if count > 0:
@@ -52,6 +55,7 @@ def check_and_read_data(db):
         
         with open('data/links.csv', newline='', encoding='utf8') as links:
              links = csv.reader(links, delimiter=',')
+             links = list(islice(links, 1000))
              count = 0
              for link_row in links:
                 if count > 0:
@@ -72,6 +76,7 @@ def check_and_read_data(db):
         
         with open('data/ratings.csv', newline='', encoding='utf8') as ratings:
             ratings = csv.reader(ratings, delimiter=',')
+            ratings = list(islice(ratings, 1000))
             count = 0
             for ratings_row in ratings:
                 if count > 0:
