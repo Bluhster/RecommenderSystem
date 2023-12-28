@@ -49,15 +49,19 @@
                 }
             });
 
+            // Store selected options in localStorage
+            localStorage.setItem('selectedOptions', JSON.stringify(selectedOptions));
+
+
             // Display selected options in the designated area
             var selectedOptionsElement = document.getElementById('selectedOptions');
             selectedOptionsElement.innerHTML = 'Selected Options: ' + (selectedOptions.length > 0 ? selectedOptions.join(', ') : 'None');
 
-            // Store selected options in localStorage
-            localStorage.setItem('selectedOptions', JSON.stringify(selectedOptions));
 
             // Redirect to the new page
             window.location.href = 'selected_genre';
+
+
         }
     </script>
 

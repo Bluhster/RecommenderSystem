@@ -11,13 +11,29 @@
     <!-- Display selected options from localStorage -->
     <div id="selectedOptions"></div>
 
+
     <script>
+
         // Retrieve selected options from localStorage
         var selectedOptions = JSON.parse(localStorage.getItem('selectedOptions'));
 
         // Display selected options in the designated area
         var selectedOptionsElement = document.getElementById('selectedOptions');
         selectedOptionsElement.innerHTML = 'Selected Options: ' + (selectedOptions ? selectedOptions.join(', ') : 'None');
+
+        var queryString = Object.keys(selectedOptions).map(key => key + '=' + encodeURIComponent(selectedOptions[key])).join('&');
+        var url = '/selected_genre?' + queryString;
+
+
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Response from server:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
     </script>
 
 </body>

@@ -54,10 +54,42 @@ def movies_page():
     check_and_read_data(db)
 
     # first 10 movies
-    movies = Movie.query.limit(100).all()
+    # movies = Movie.query.limit(100).all()
 
+    all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama",
+                  "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War",
+                  "Western"]
+    return render_template("filter_genre.html", all_genres=all_genres)
+
+    # return render_template("movies.html", movies=movies)
+
+
+@app.route('/filter_genre')
+@login_required
+def filter_genre():
+    all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
+    return render_template("filter_genre.html", all_genres=all_genres)
+
+
+@app.route('/selected_genre')
+@login_required
+def selected_genre():
+    global chosen_genre_list
+    chosen_genre = request.args.to_dict()
+
+    print("Received data:", chosen_genre)
+    chosen_genre_list = list(chosen_genre.values())
+    print(chosen_genre_list)
+
+    # movies = [None]*len(chosen_genre_list)
+    # print(movies)
+    # #
+    # for idx, genre in enumerate(chosen_genre_list):
+    #     movies[idx] = Movie.query\
+    #     .filter(Movie.genres.any(MovieGenre.genre == genre))
+        # .limit(10).all()
     # only Romance movies
-    #movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()
+    movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()
 
     # only Romance AND Horror movies
     # movies = Movie.query\
@@ -65,23 +97,9 @@ def movies_page():
     #     .filter(Movie.genres.any(MovieGenre.genre == 'Horror')) \
     #     .limit(10).all()
 
+    print(movies)
+
     return render_template("movies.html", movies=movies)
-
-
-@app.route('/filter_genre')
-def filter_genre():
-    all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
-    return render_template("filter_genre.html", all_genres=all_genres)
-
-
-@app.route('/selected_genre')
-def selected_genre():
-    # print(genres_chosen)
-    # genres_chosen = request.args.get("selectedOptions", " ")
-    # genres_chose = request.args.get("selected_genre")
-    # print("dfhsjgdk", genres_chose)
-    # print("AAA", genres_chosen)
-    return render_template("selected_genre.html")
 
 
 # Start development web server
