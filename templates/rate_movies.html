@@ -1,22 +1,29 @@
 {% extends "flask_user_layout.html" %}
 {% block content %}
+<script>
+function updateRating(movieId, rating) {
+    document.getElementById('rating-' + movieId).value = movieId + ':' + rating;
+}
+</script>
+
 <div class="container">
     <h2>Rate Movies</h2>
     <form method="POST" action="{{ url_for('rate_movies') }}">
         {% for movie in movies %}
             <div>
-                <label for="rating-{{ movie.id }}">{{ movie.title }}</label>
-                <select name="rating" id="rating-{{ movie.id }}">
+                <label>{{ movie.title }}</label>
+                <select onchange="updateRating({{ movie.id }}, this.value)">
+                    <option value="None">Select Rating</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
                 </select>
-                <input type="hidden" name="movie_id" value="{{ movie.id }}">
-                <input type="submit" value="Rate">
+                <input type="hidden" name="ratings[]" id="rating-{{ movie.id }}" value="{{ movie.id }}:None">
             </div>
         {% endfor %}
+        <input type="submit" name="continue" value="Continue">
         <input type="submit" name="done_rating" value="I'm Done Rating">
     </form>
 </div>

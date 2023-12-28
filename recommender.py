@@ -97,29 +97,33 @@ def movies_page():
 @app.route('/rate_movies', methods=['GET', 'POST'])
 @login_required
 def rate_movies():
-    user_ratings = []
-
     if request.method == 'POST':
-        if 'done_rating' in request.form:
-            # Process the collected ratings here (e.g., save to the database)
-            for rating_info in user_ratings:
-                movie_id, rating = rating_info['movie_id'], rating_info['rating']
-                # TODO: Save each rating to the database
-            flash('Your ratings have been submitted!', 'success')
-            return redirect(url_for('home_page'))  # Redirect to home page or any other page
-
         user_id = current_user.id
-        movie_id = request.form.get('movie_id')
-        rating = request.form.get('rating')
+        ratings_data = request.form.getlist('ratings[]')
 
-        user_ratings.append({'user_id': user_id, 'movie_id': movie_id, 'rating': rating})
+        # Process the ratings
+        for data in ratings_data:
+            movie_id, rating = data.split(':')
+            if rating != 'None':  # Filter out unrated movies
+                rating = float(rating)
+                new_rating = MovieRatings(user_id=user_id, movie_id=movie_id, rating=rating)
+                db.session.add(new_rating)
+        db.session.commit()
+        flash('Your ratings have been submitted!', 'success')
 
-    # Select random movies from the database
+        if 'done_rating' in request.form:
+            # If "I'm Done Rating" is clicked, redirect to a different page (e.g., home)
+            return redirect(url_for('home_page'))
+
+        # If "Continue" is clicked, fetch new set of random movies
+        movie_count = db.session.query(Movie).count()
+        random_movies = Movie.query.offset(int(movie_count * random.random())).limit(5).all()
+        return render_template("rate_movies.html", movies=random_movies)
+
+    # Initial page load
     movie_count = db.session.query(Movie).count()
     random_movies = Movie.query.offset(int(movie_count * random.random())).limit(5).all()
-    print(user_ratings)
-    return render_template("rate_movies.html", movies=random_movies, user_ratings=user_ratings)
-
+    return render_template("rate_movies.html", movies=random_movies)
 
 
 # Start development web server
