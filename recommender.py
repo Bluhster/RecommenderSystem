@@ -1,10 +1,12 @@
 # Contains parts from: https://flask-user.readthedocs.io/en/latest/quickstart_app.html
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, flash
 from flask_user import login_required, UserManager
 
 from models import db, User, Movie, MovieGenre, MovieTags, MovieLinks, MovieRatings
 from read_data import check_and_read_data
+import random
+from flask_login import current_user
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -91,6 +93,30 @@ def movies_page():
     #     .limit(10).all()
 
     return render_template("movies.html", movies=movies)
+
+@app.route('/rate_movies', methods=['GET', 'POST'])
+@login_required
+def rate_movies():
+    if request.method == 'POST':
+        user_id = current_user.id
+        movie_id = request.form.get('movie_id')
+        rating = request.form.get('rating')
+
+        # Check if the user has already rated this movie
+        existing_rating = MovieRatings.query.filter_by(user_id=user_id, movie_id=movie_id).first()
+        if existing_rating:
+            flash('You have already rated this movie.', 'error')
+        else:
+            new_rating = MovieRatings(user_id=user_id, movie_id=movie_id, rating=rating)
+            db.session.add(new_rating)
+            db.session.commit()
+            flash('Your rating has been submitted!', 'success')
+
+    # Select random movies from the database
+    movie_count = db.session.query(Movie).count()
+    random_movies = Movie.query.offset(int(movie_count * random.random())).limit(5).all()
+
+    return render_template("rate_movies.html", movies=random_movies)
 
 
 # Start development web server

@@ -1,0 +1,22 @@
+{% extends "flask_user_layout.html" %}
+{% block content %}
+<div class="container">
+    <h2>Rate Movies</h2>
+    <form method="POST" action="{{ url_for('rate_movies') }}">
+        {% for movie in movies %}
+            <div>
+                <label for="rating-{{ movie.id }}">{{ movie.title }}</label>
+                <select name="rating" id="rating-{{ movie.id }}">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <input type="hidden" name="movie_id" value="{{ movie.id }}">
+                <input type="submit" value="Rate">
+            </div>
+        {% endfor %}
+    </form>
+</div>
+{% endblock %}
