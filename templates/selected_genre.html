@@ -54,6 +54,26 @@
             color: darkred;
             font-size: 20px;
         }
+        .rating-options {
+            display: flex;
+            gap: 2px; /* Adjust the space between buttons */
+            margin-left: 15px;
+        }
+
+        .rating-options button {
+            background-color: #4CAF50; /* Green color */
+            color: white; /* Text color */
+            padding: 5px 8px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            margin-left: 15px;
+        }
+
+        .rating-options button:hover {
+            background-color: #45a049; /* Hovered button color */
+        }
     </style>
 </head>
 <!--    <h2>Movies</h2>-->
@@ -75,14 +95,14 @@
         }
 
         // Retrieve selected options from localStorage
-        var selectedOptions = JSON.parse(localStorage.getItem('selectedOptions'));
+        var selectedOptions = JSON.parse(localStorage.getItem("selectedOptions"));
 
         // Display selected options in the designated area
-        var selectedOptionsElement = document.getElementById('selectedOptions');
+        var selectedOptionsElement = document.getElementById("selectedOptions");
         // selectedOptionsElement.innerHTML = 'Selected Optionsss: ' + (selectedOptions ? selectedOptions.join(', ') : 'None');
 
         if (selectedOptions && selectedOptions.length > 0) {
-            var formattedOptions = selectedOptions.map(option => `<span>${option}</span>`).join(', ');
+            var formattedOptions = selectedOptions.map(option => `<span>${option}</span>`).join(", ");
             selectedOptionsElement.innerHTML = `Selected Options: ${formattedOptions}`;
         } else {
             selectedOptionsElement.innerHTML = 'None';
@@ -90,7 +110,7 @@
         console.log('Selected Options:', selectedOptions);
 
 
-        var queryString = Object.keys(selectedOptions).map(key => key + '=' + encodeURIComponent(selectedOptions[key])).join('&');
+        var queryString = Object.keys(selectedOptions).map(key => key + "=" + encodeURIComponent(selectedOptions[key])).join('&');
         var url = '/selected_genre?' + queryString;
 
 
@@ -146,13 +166,18 @@
                 <p>the rating for the movie "{{m.title}}" was {{r.rating}} by user {{r.user_id}}</p>
                 {% endfor %}
                 </div>
-                  <div class="panel-footer">Rate:
-                      <a href="#" class="card-link" onclick="rateMovie({{ m.movieId }}, 1)">1</a>
-                      <a href="#" class="card-link" onclick="rateMovie({{ m.movieId }}, 2)">2</a>
-                      <a href="#" class="card-link" onclick="rateMovie({{ m.movieId }}, 3)">3</a>
-                      <a href="#" class="card-link" onclick="rateMovie({{ m.movieId }}, 4)">4</a>
-                      <a href="#" class="card-link" onclick="rateMovie({{ m.movieId }}, 5)">5</a> Stars
-                  </div>
+
+                <form class="rating-form" action="/selected_genre" method="post">
+                    <input type="hidden" name="movieId" value="{{ m.id }}">
+                    <div class="rating-options">
+                        <span> Rate the movie: </span>
+                        {% for rating in range(1, 6) %}
+                            <button type="submit" name="rating" value="{{ rating }}">{{ rating }} ⭑</button>
+                        {% endfor %}
+                    </div>
+                </form>
+
+
             </div>
         {% endfor %}
     {% else %}
