@@ -21,7 +21,7 @@
     <br>
 
     <!-- Display selected options from localStorage -->
-    <div id="selectedOptions"></div>
+    <div id="selectedOptions"> These are the options</div>
 
 
     <script>
@@ -31,7 +31,10 @@
 
         // Display selected options in the designated area
         var selectedOptionsElement = document.getElementById('selectedOptions');
-        selectedOptionsElement.innerHTML = 'Selected Options: ' + (selectedOptions ? selectedOptions.join(', ') : 'None');
+        selectedOptionsElement.innerHTML = 'Selected Optionsss: ' + (selectedOptions ? selectedOptions.join(', ') : 'None');
+
+        console.log('Selected Options:', selectedOptions);
+
 
         var queryString = Object.keys(selectedOptions).map(key => key + '=' + encodeURIComponent(selectedOptions[key])).join('&');
         var url = '/selected_genre?' + queryString;

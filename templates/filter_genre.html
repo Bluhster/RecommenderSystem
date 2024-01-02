@@ -16,31 +16,37 @@
 <body>
 
 
-    <fieldset>
+        <fieldset>
 
-        <legend>Choose Your favorite Genre/s:</legend>
-        {% for genre in all_genres %}
-            <div class= "mylabel">
-                <input type="checkbox" name={{genre}}> {{genre}}
-            </div><br>
-        {% endfor %}
+            <legend>Choose Your favorite Genre/s:</legend>
+            {% for genre in all_genres %}
+                <div class= "mylabel">
+                    <input type="checkbox" name="{{ genre }}" value="{{ genre }}">
+                    {{genre}}
+                </div><br>
+            {% endfor %}
 
 
-        <button id='button' onclick="showSelectedOptions(this.genre)">
-            Show Selected Options
+<!--        <button type='button' onclick="showSelectedOptions()">-->
+<!--            Show Selected Options-->
+<!--        </button>-->
+<!--        <button type="button" onclick="redirect()">-->
+<!--            Show related Movies-->
+<!--        </button>-->
+         <button type='button' onclick="processOptions()">
+        Process Options
         </button>
+
 
         <div id="selectedOptions"></div>
     </fieldset>
     <script>
-        function showSelectedOptions(genre) {
+        function processOptions() {
             // Get all checkboxes
             var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
             // Array to store selected options
             var selectedOptions = [];
-
-            console.log(genre);
 
             // Iterate through checkboxes and check if they are checked
             checkboxes.forEach(function (checkbox) {
@@ -52,17 +58,20 @@
             // Store selected options in localStorage
             localStorage.setItem('selectedOptions', JSON.stringify(selectedOptions));
 
-
-            // Display selected options in the designated area
+            // Display selected options or redirect based on the context
             var selectedOptionsElement = document.getElementById('selectedOptions');
-            selectedOptionsElement.innerHTML = 'Selected Options: ' + (selectedOptions.length > 0 ? selectedOptions.join(', ') : 'None');
+            if (selectedOptions.length == 0) {
+                selectedOptionsElement.innerHTML = 'No options selected.';
+            }
 
-
-            // Redirect to the new page
-            window.location.href = 'selected_genre';
-
+            // Redirect to the new page after a brief delay
+            var queryString = selectedOptions.map(option => 'selectedGenres=' + encodeURIComponent(option)).join('&');
+            var url = '/selected_genre?' + queryString;
+            window.location.href = url;
 
         }
+
+
     </script>
 
 </body>

@@ -1,7 +1,8 @@
 # Contains parts from: https://flask-user.readthedocs.io/en/latest/quickstart_app.html
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from flask_user import login_required, UserManager
+import random
 
 from models import db, User, Movie, MovieGenre, MovieTags
 from read_data import check_and_read_data
@@ -59,6 +60,8 @@ def movies_page():
     all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama",
                   "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War",
                   "Western"]
+    print("Movies Page")
+
     return render_template("filter_genre.html", all_genres=all_genres)
 
     # return render_template("movies.html", movies=movies)
@@ -67,39 +70,64 @@ def movies_page():
 @app.route('/filter_genre')
 @login_required
 def filter_genre():
-    all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
-    return render_template("filter_genre.html", all_genres=all_genres)
-
-
-@app.route('/selected_genre')
-@login_required
-def selected_genre():
-    global chosen_genre_list
     chosen_genre = request.args.to_dict()
 
     print("Received data:", chosen_genre)
     chosen_genre_list = list(chosen_genre.values())
-    print(chosen_genre_list)
+    print(len(chosen_genre_list))
+    movies = []
+    if len(chosen_genre_list) > 0:
+        print(chosen_genre_list)
 
-    # movies = [None]*len(chosen_genre_list)
-    # print(movies)
-    # #
-    # for idx, genre in enumerate(chosen_genre_list):
-    #     movies[idx] = Movie.query\
-    #     .filter(Movie.genres.any(MovieGenre.genre == genre))
-        # .limit(10).all()
-    # only Romance movies
-    movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()
-
-    # only Romance AND Horror movies
-    # movies = Movie.query\
-    #     .filter(Movie.genres.any(MovieGenre.genre == 'Romance')) \
-    #     .filter(Movie.genres.any(MovieGenre.genre == 'Horror')) \
-    #     .limit(10).all()
-
-    print(movies)
-
+        for idx, genre in enumerate(chosen_genre_list):
+            movies = Movie.query \
+                .filter(Movie.genres.any(MovieGenre.genre == genre)) \
+                .filter(Movie.genres.any(MovieGenre.genre == 'Horror')) \
+                .limit(10).all()
+            print(movies)
+    # all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
     return render_template("movies.html", movies=movies)
+
+
+@app.route('/selected_genre', methods=['GET'])
+@login_required
+def selected_genre():
+
+    selected_genres = request.args.getlist('selectedGenres')
+    print("Received data:", selected_genres)
+
+    if selected_genres == 'No options selected.':
+        movies = []
+        # If no genres selected, show a random mix of 10 movies
+        all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama",
+                      "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War",
+                      "Western"]
+        random_genres = random.sample(all_genres, k=min(5, len(all_genres)))
+        for genre in random_genres:
+            genre_movies = Movie.query \
+                .filter(Movie.genres.any(MovieGenre.genre == genre)) \
+                .all()
+            movies.extend(genre_movies)
+        movies = random.sample(movies, k=min(10, len(movies)))
+
+    else:
+        # print("SELECTED GENRES", selected_genres)
+        # Filter movies based on all selected genres
+        movies = Movie.query
+        for genre in selected_genres:
+            movies = movies.filter(Movie.genres.any(MovieGenre.genre == genre))
+
+        movies = movies.limit(15).all()
+
+
+        # Show a random mix if no genres selected
+    # if not selected_genres:
+    #     print("NOOOOT SELEEECTED")
+    #
+
+    print("Found movies:", movies)
+    return render_template("movies.html", movies=movies)
+
 
 
 # Start development web server
