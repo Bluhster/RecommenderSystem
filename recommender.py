@@ -119,13 +119,6 @@ def selected_genre():
 
         movies = movies.limit(15).all()
 
-
-        # Show a random mix if no genres selected
-    # if not selected_genres:
-    #     print("NOOOOT SELEEECTED")
-    #
-
-    print("Found movies:", movies)
     return render_template("movies.html", movies=movies)
 
 
