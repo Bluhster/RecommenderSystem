@@ -86,7 +86,7 @@ def filter_genre():
                 .limit(10).all()
             print(movies)
     # all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
-    return render_template("movies.html", movies=movies)
+    return render_template("selected_genre.html", movies=movies)
 
 
 @app.route('/selected_genre', methods=['GET'])
@@ -119,7 +119,7 @@ def selected_genre():
 
         movies = movies.limit(15).all()
 
-    return render_template("movies.html", movies=movies)
+    return render_template("selected_genre.html", movies=movies)
 
 
 
