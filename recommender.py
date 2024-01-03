@@ -66,28 +66,6 @@ def movies_page():
 
 
 
-@app.route('/filter_genre')
-@login_required
-def filter_genre():
-    chosen_genre = request.args.to_dict()
-
-    print("Received data:", chosen_genre)
-    chosen_genre_list = list(chosen_genre.values())
-    print(len(chosen_genre_list))
-    movies = []
-    if len(chosen_genre_list) > 0:
-        print(chosen_genre_list)
-
-        for idx, genre in enumerate(chosen_genre_list):
-            movies = Movie.query \
-                .filter(Movie.genres.any(MovieGenre.genre == genre)) \
-                .filter(Movie.genres.any(MovieGenre.genre == 'Horror')) \
-                .limit(10).all()
-            print(movies)
-    # all_genres = ["Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
-    return render_template("selected_genre.html", movies=movies)
-
-
 @app.route('/selected_genre', methods=['GET', 'POST'])
 @login_required
 def selected_genre():
