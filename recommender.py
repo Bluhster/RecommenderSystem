@@ -74,7 +74,7 @@ def selected_genre():
         selected_genres = request.args.getlist('selectedGenres')
         print("Received data:", selected_genres)
 
-        if selected_genres == 'No options selected.':
+        if len(selected_genres) == 0:
             movies = []
             # If no genres selected, show a random mix of 10 movies
             all_genres = ["Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama",
@@ -91,11 +91,16 @@ def selected_genre():
         else:
             # print("SELECTED GENRES", selected_genres)
             # Filter movies based on all selected genres
-            movies = Movie.query
+            movies_query = Movie.query
             for genre in selected_genres:
-                movies = movies.filter(Movie.genres.any(MovieGenre.genre == genre))
+                movies_query = movies_query.filter(Movie.genres.any(MovieGenre.genre == genre))
 
-            movies = movies.limit(15).all()
+            # Fetch the filtered movies from the query
+            filtered_movies = movies_query.all()
+
+            # Sample 10 movies from the filtered list
+            movies = random.sample(filtered_movies, k=min(10, len(filtered_movies)))
+
 
         return render_template("selected_genre.html", movies=movies)
     elif request.method == 'POST':
