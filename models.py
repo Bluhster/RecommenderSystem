@@ -57,3 +57,9 @@ class MovieRatings(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     rating = db.Column(db.Float, nullable=False)
 
+class UserRatings(db.Model):
+    __tablename__= 'user_ratings'
+    id = db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    rating = db.Column(db.Float, nullable=False)

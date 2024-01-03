@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_user import login_required, UserManager
 
-from models import db, User, Movie, MovieGenre, MovieTags, MovieLinks, MovieRatings
+from models import db, User, Movie, MovieGenre, MovieTags, MovieLinks, MovieRatings, UserRatings
 from read_data import check_and_read_data
 import random
 from flask_login import current_user
@@ -106,7 +106,7 @@ def rate_movies():
             movie_id, rating = data.split(':')
             if rating != 'None':  # Filter out unrated movies
                 rating = float(rating)
-                new_rating = MovieRatings(user_id=user_id, movie_id=movie_id, rating=rating)
+                new_rating = UserRatings(user_id=user_id, movie_id=movie_id, rating=rating)
                 db.session.add(new_rating)
         db.session.commit()
         flash('Your ratings have been submitted!', 'success')
