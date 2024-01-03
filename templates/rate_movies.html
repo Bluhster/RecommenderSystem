@@ -1,30 +1,86 @@
 {% extends "flask_user_layout.html" %}
 {% block content %}
-<script>
-function updateRating(movieId, rating) {
-    document.getElementById('rating-' + movieId).value = movieId + ':' + rating;
-}
-</script>
+
+<head>
+    <style>
+        body {
+            margin: 20px;
+            font-family: "Arial", sans-serif;
+        }
+        .green-box {
+            background-color: green;
+            color: white;
+            padding: 6px;
+            margin: 3px;
+            border-radius: 5px;
+            font-size: 10px;
+        }
+        .rating-options {
+            display: flex;
+            gap: 2px;
+            margin-left: 15px;
+        }
+        .rating-options button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 8px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            margin-left: 15px;
+        }
+        .rating-options button:hover {
+            background-color: #45a049;
+        }
+        .links a {
+            color: dimgray;
+            font-style: italic;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+    </style>
+</head>
 
 <div class="container">
     <h2>Rate Movies</h2>
     <form method="POST" action="{{ url_for('rate_movies') }}">
         {% for movie in movies %}
-            <div>
-                <label>{{ movie.title }}</label>
-                <select onchange="updateRating({{ movie.id }}, this.value)">
-                    <option value="None">Select Rating</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <input type="hidden" name="ratings[]" id="rating-{{ movie.id }}" value="{{ movie.id }}:None">
+            <div class="panel panel-success" style="border: 2px solid green">
+                <div class="panel-heading"><b>{{ movie.title }}</b></div>
+                <div class="panel-body">
+                    <p>
+                        {% for g in movie.genres %}
+                            <span class="green-box">{{ g.genre }}</span>
+                        {% endfor %}
+                    </p>
+                    <!-- Movie Links -->
+                    <div class="links">
+                        {% for link in movie.links %}
+                            <a href="{{ link.imdb }}" target="_blank">Link to review on IMDb</a>
+                            <br>
+                            <a href="{{ link.tmdb }}" target="_blank">Link to review on TMDb</a>
+                        {% endfor %}
+                    </div>
+                    <div class="rating-options">
+                        <span> Rate the movie: </span>
+                        {% for rating in range(1, 6) %}
+                            <button type="button" onclick="updateRating('{{ movie.id }}', '{{ rating }}')">{{ rating }} ⭑</button>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="ratings[]" id="rating-{{ movie.id }}" value="{{ movie.id }}:None">
+                </div>
             </div>
         {% endfor %}
         <input type="submit" name="continue" value="Continue">
         <input type="submit" name="done_rating" value="I'm Done Rating">
     </form>
 </div>
+
+<script>
+    function updateRating(movieId, rating) {
+        document.getElementById('rating-' + movieId).value = movieId + ':' + rating;
+    }
+</script>
+
 {% endblock %}
