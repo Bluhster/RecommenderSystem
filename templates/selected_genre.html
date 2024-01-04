@@ -75,6 +75,7 @@
             background-color: #45a049; /* Hovered button color */
         }
     </style>
+
 </head>
 <!--    <h2>Movies</h2>-->
     <br>
@@ -91,7 +92,7 @@
 
     <script>
         function goBack() {
-            window.location.href = '/movies';
+            window.location.href = '/filter_genre';
         }
 
         // Retrieve selected options from localStorage
@@ -131,62 +132,54 @@
 
     </script>
 
+    <script>
+        function updateRating(movieId, rating) {
+            document.getElementById('rating-' + movieId).value = movieId + ':' + rating;
+        }
+    </script>
+
 <div class="container">
-    {% if movies %}
-
-        {% for m in movies %}
-            <div class="panel panel-success" style="border: 2px solid green">
-                <div class="panel-heading"><b>{{ m.title }}</b>
-                </div>
-
-                <div class="panel-body">
-                    <p>
-                        {% for g in m.genres %}
-                            <span class="green-box">{{ g.genre }}</span>
-                        {% endfor %}
-                    </p>
-
-                    {% if m.tags %}
-
-                        <b> Tags: </b>
-                        {% for t in m.tags %}
-                            <span class="label label-success">{{ t.tag }}</span>
-                        {% endfor %}
-                        <br><br>
-                    {% endif %}
-                <span class="links" color="black">
-                    {% for l in m.links %}
-                    <a href="{{ l.imdb }}">Link to review on IMDb</a>
-                    <br>
-                    <a href="{{ l.tmdb }}">Link to review on TMBD</a>
-                    {% endfor %}
-                </span>
-                <br><br>
-                {% for r in m.ratings %}
-                <p>the rating for the movie "{{m.title}}" was {{r.rating}} by user {{r.user_id}}</p>
-                {% endfor %}
-                </div>
-
-                <form class="rating-form" action="/selected_genre" method="post">
-                    <input type="hidden" name="movieId" value="{{ m.id }}">
-                    <div class="rating-options">
-                        <span> Rate the movie: </span>
-                        {% for rating in range(1, 6) %}
-                            <button type="submit" name="rating" value="{{ rating }}">{{ rating }} ⭑</button>
-                        {% endfor %}
+    <h2>Rate Movies</h2>
+    <form method="POST" action="{{ url_for('selected_genre') }}">
+        {% if movies %}
+            {% for movie in movies %}
+                <div class="panel panel-success" style="border: 2px solid green">
+                    <div class="panel-heading"><b>{{ movie.title }}</b></div>
+                    <div class="panel-body">
+                        <p>
+                            {% for g in movie.genres %}
+                                <span class="green-box">{{ g.genre }}</span>
+                            {% endfor %}
+                        </p>
+                        <!-- Movie Links -->
+                        <div class="links">
+                            {% for link in movie.links %}
+                                <a href="{{ link.imdb }}" target="_blank">Link to review on IMDb</a>
+                                <br>
+                                <a href="{{ link.tmdb }}" target="_blank">Link to review on TMDb</a>
+                            {% endfor %}
+                        </div>
+                        <div class="rating-options">
+                            <span> Rate the movie: </span>
+                            {% for rating in range(1, 6) %}
+                                <button type="button" onclick="updateRating('{{ movie.id }}', '{{ rating }}')">{{ rating }} ⭑</button>
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="ratings[]" id="rating-{{ movie.id }}" value="{{ movie.id }}:None">
                     </div>
-                </form>
-
-
+                </div>
+            {% endfor %}
+            <input type="submit" name="continue" value="Continue">
+            <input type="submit" name="done_rating" value="I'm Done Rating">
+        </form>
+    </div>
+        {% else %}
+            <div id="nomoviesfound">
+                There are no movies matching your request!
+                <br>
+                Try different Genre/s
             </div>
-        {% endfor %}
-    {% else %}
-        <div id="nomoviesfound">
-            There are no movies matching your request!
-            <br>
-            Try different Genre/s
-        </div>
-    {% endif %}
+        {% endif %}
 
 </div>
 

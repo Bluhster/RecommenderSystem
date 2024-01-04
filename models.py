@@ -20,7 +20,6 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, server_default='')
     last_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, server_default='')
 
-
 class Movie(db.Model):
     __tablename__ = 'movies'
     id = db.Column(db.Integer, primary_key=True)
@@ -29,7 +28,6 @@ class Movie(db.Model):
     tags = db.relationship('MovieTags', backref='movie', lazy=True)
     links = db.relationship('MovieLinks', backref='movie', lazy=True)
     ratings = db.relationship('MovieRatings', backref='movie', lazy=True)
-
 
 class MovieGenre(db.Model):
     __tablename__ = 'movie_genres'
@@ -57,3 +55,9 @@ class MovieRatings(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     rating = db.Column(db.Float, nullable=False)
 
+class UserRatings(db.Model):
+    __tablename__= 'user_ratings'
+    id = db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    rating = db.Column(db.Float, nullable=False)
