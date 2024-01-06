@@ -4,10 +4,9 @@ from flask import Flask, render_template, request, flash, redirect, url_for, jso
 from flask_user import login_required, UserManager
 import random
 
-from models import db, User, Movie, MovieGenre, MovieTags, UserRatings
+from models import db, User, Movie, MovieGenre, MovieTags, MovieRatings, UserRatings
 from read_data import check_and_read_data
 from flask_login import current_user
-import json
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -52,20 +51,10 @@ def home_page():
 @app.route('/movies')
 @login_required  # User must be authenticated
 def movies_page():
-    # String-based templates
-
-    # first 10 movies
+    
     movies = Movie.query.all()
-
-    # only Romance movies
-    #movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre == 'Romance')).limit(10).all()
-
-    # only Romance AND Horror movies
-    # movies = Movie.query\
-    #     .filter(Movie.genres.any(MovieGenre.genre == 'Romance')) \
-    #     .filter(Movie.genres.any(MovieGenre.genre == 'Horror')) \
-    #     .limit(10).all()
-
+    # choose 10 random movies to present
+    movies = random.sample(movies, k=10)
     return render_template("movies.html", movies=movies)
 
 
@@ -84,7 +73,6 @@ def filter_genre():
     return render_template("filter_genre.html", all_genres=all_genres)
 
 
-
 @app.route('/selected_genre', methods=['GET', 'POST'])
 @login_required
 def selected_genre():
@@ -101,8 +89,11 @@ def selected_genre():
         else:
             all_movies = []
             for genre in selected_genres:
+                ###############################################################
+                # this right here is slooooow maybe speed up?!
+                ###############################################################
                 # Perform the query for each genre and append the results to the list
-                movies_for_genre = Movie.query \
+                movies_for_genre = Movie.query\
                     .filter(Movie.genres.any(MovieGenre.genre == genre)) \
                     .all()
                 all_movies.extend(movies_for_genre)
@@ -126,6 +117,9 @@ def selected_genre():
         else:
             all_movies = []
             for genre in selected_genres:
+                ###############################################################
+                # this right here is slooooow
+                ###############################################################
                 # Perform the query for each genre and append the results to the list
                 movies_for_genre = Movie.query \
                     .filter(Movie.genres.any(MovieGenre.genre == genre)) \
