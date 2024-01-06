@@ -91,7 +91,7 @@ def selected_genre():
     if request.method == 'GET':
         # retrieve selected genres from previous view
         selected_genres = request.args.getlist('selectedGenres')
-        print("Received data:", selected_genres)
+        #print("Received data:", selected_genres)
         
         # if no genres were selected, just return 10 random movies to rate
         if len(selected_genres) == 0:
@@ -99,16 +99,16 @@ def selected_genre():
             movies = random.sample(all_movies, k=10)
 
         else:
-            # Filter movies based on all selected genres
-            movies_query = Movie.query
+            all_movies = []
             for genre in selected_genres:
-                movies_query = Movie.query.filter(Movie.genres.any(MovieGenre.genre == genre))
-
-            # Fetch the filtered movies from the query
-            filtered_movies = movies_query.all()
+                # Perform the query for each genre and append the results to the list
+                movies_for_genre = Movie.query \
+                    .filter(Movie.genres.any(MovieGenre.genre == genre)) \
+                    .all()
+                all_movies.extend(movies_for_genre)
 
             # Sample 10 movies from the filtered list
-            movies = random.sample(filtered_movies, k=min(10, len(filtered_movies)))
+            movies = random.sample(all_movies, k=min(10, len(all_movies)))
 
         return render_template("selected_genre.html", movies=movies, genres=selected_genres)
     
@@ -124,16 +124,16 @@ def selected_genre():
             movies = random.sample(all_movies, k=10)
 
         else:
-            # Filter movies based on all selected genres
-            movies_query = Movie.query
+            all_movies = []
             for genre in selected_genres:
-                movies_query = Movie.query.filter(Movie.genres.any(MovieGenre.genre == genre))
-
-            # Fetch the filtered movies from the query
-            filtered_movies = movies_query.all()
+                # Perform the query for each genre and append the results to the list
+                movies_for_genre = Movie.query \
+                    .filter(Movie.genres.any(MovieGenre.genre == genre)) \
+                    .all()
+                all_movies.extend(movies_for_genre)
 
             # Sample 10 movies from the filtered list
-            movies = random.sample(filtered_movies, k=min(10, len(filtered_movies)))
+            movies = random.sample(all_movies, k=min(10, len(all_movies)))
 
         # Process the ratings
         for data in ratings_data:
