@@ -29,37 +29,40 @@
 <div class="container">
     <h2>Movies</h2>
     <br>
-    {% for m in movies %}
-        <div class="panel panel-success" style="border: 2px solid green">
-            <div class="panel-heading"><b>{{ m.title }}</b>
-            </div>
+    {% for movie in movies %}
+                <div class="panel panel-success" style="border: 2px solid green">
+                    <div class="panel-heading"><b>{{ movie.title }}</b></div>
+                    <div class="panel-body">
+                        <p>
+                            <b> Genres: </b>
+                            {% for g in movie.genres %}
+                                <span class="green-box">{{ g.genre }}</span>
+                            {% endfor %}
+                            <br>
+                        </p>
 
-            <div class="panel-body">
-                <p>
-                    {% for g in m.genres %}
-                        <span class="green-box">{{ g.genre }}</span>
-                    {% endfor %}
-                </p>
-
-                {% if m.tags %}
-
-                    <b> Tags: </b>
-                    {% for t in m.tags %}
-                        <span class="label label-success">{{ t.tag }}</span>
-                    {% endfor %}
-                    <br><br>
-                {% endif %}
-            <span class="links" color="black">
-                {% for l in m.links %}
-                <a href="{{ l.imdb }}">Link to review on IMDb</a>
-                <br>
-                <a href="{{ l.tmdb }}">Link to review on TMBD</a>
-                {% endfor %}
-            </span>
-            </div>
-        </div>
-    {% endfor %}
+                        {% if movie.tags %}
+                            <b> Tags: </b>
+                            {% for t in movie.tags %}
+                                <span class="label label-success">{{ t.tag }}</span>
+                            {% endfor %}
+                            <br><br>
+                        {% endif %}
+                        <!-- Movie Links -->
+                        <div class="links">
+                            {% for link in movie.links %}
+                                <a href="{{ link.imdb }}" target="_blank">Link to review on IMDb</a>
+                                <br>
+                                <a href="{{ link.tmdb }}" target="_blank">Link to review on TMDb</a>
+                            {% endfor %}
+                        </div>
+                        <br>
+                        
+                    </div>
+                </div>
+            {% endfor %}
 </div>
+
 <button id="loadMoreBtn" onclick="showNextMovies()">Show Next 10 Movies</button>
 
     <script>

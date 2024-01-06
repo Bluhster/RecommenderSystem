@@ -57,7 +57,7 @@
         .rating-options {
             display: flex;
             gap: 2px; /* Adjust the space between buttons */
-            margin-left: 15px;
+            margin-left: 5px;
         }
 
         .rating-options button {
@@ -68,7 +68,7 @@
             cursor: pointer;
             border-radius: 3px;
             margin-bottom: 15px;
-            margin-left: 15px;
+            margin-left: 5px;
         }
 
         .rating-options button:hover {
@@ -147,10 +147,20 @@
                     <div class="panel-heading"><b>{{ movie.title }}</b></div>
                     <div class="panel-body">
                         <p>
+                            <b> Genres: </b>
                             {% for g in movie.genres %}
                                 <span class="green-box">{{ g.genre }}</span>
                             {% endfor %}
+                            <br>
                         </p>
+
+                        {% if movie.tags %}
+                            <b> Tags: </b>
+                            {% for t in movie.tags %}
+                                <span class="label label-success">{{ t.tag }}</span>
+                            {% endfor %}
+                            <br><br>
+                        {% endif %}
                         <!-- Movie Links -->
                         <div class="links">
                             {% for link in movie.links %}
@@ -161,7 +171,7 @@
                         </div>
                         <br>
                         <div class="rating-options">
-                            <span> Rate the movie: </span>
+                            <b> Rate the movie: </b>
                             {% for rating in range(1, 6) %}
                                 <button type="button" onclick="updateRating('{{ movie.id }}', '{{ rating }}')">{{ rating }} ⭑</button>
                             {% endfor %}
@@ -171,7 +181,6 @@
                     </div>
                 </div>
             {% endfor %}
-            
             {% for genre in genres %}
                 <input type="hidden" name="genres" value="{{ genre }}">
             {% endfor %}
