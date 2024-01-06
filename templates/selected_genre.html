@@ -63,7 +63,7 @@
         .rating-options button {
             background-color: #4CAF50; /* Green color */
             color: white; /* Text color */
-            padding: 5px 8px;
+            padding: 3px 6px;
             border: none;
             cursor: pointer;
             border-radius: 3px;
@@ -159,6 +159,7 @@
                                 <a href="{{ link.tmdb }}" target="_blank">Link to review on TMDb</a>
                             {% endfor %}
                         </div>
+                        <br>
                         <div class="rating-options">
                             <span> Rate the movie: </span>
                             {% for rating in range(1, 6) %}
@@ -166,8 +167,13 @@
                             {% endfor %}
                         </div>
                         <input type="hidden" name="ratings[]" id="rating-{{ movie.id }}" value="{{ movie.id }}:None">
+                        
                     </div>
                 </div>
+            {% endfor %}
+            
+            {% for genre in genres %}
+                <input type="hidden" name="genres" value="{{ genre }}">
             {% endfor %}
             <input type="submit" name="continue" value="Continue">
             <input type="submit" name="done_rating" value="I'm Done Rating">

@@ -7,6 +7,7 @@ import random
 from models import db, User, Movie, MovieGenre, MovieTags, UserRatings
 from read_data import check_and_read_data
 from flask_login import current_user
+import json
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -88,43 +89,51 @@ def filter_genre():
 @login_required
 def selected_genre():
     if request.method == 'GET':
-
+        # retrieve selected genres from previous view
         selected_genres = request.args.getlist('selectedGenres')
         print("Received data:", selected_genres)
-
+        
+        # if no genres were selected, just return 10 random movies to rate
         if len(selected_genres) == 0:
-            movies = []
-            # If no genres selected, show a random mix of 15 movies
-            all_genres = ["Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama",
-                          "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War",
-                          "Western"]
-            random_genres = random.sample(all_genres, k=min(15, len(all_genres)))
-            for genre in random_genres:
-                genre_movies = Movie.query \
-                    .filter(Movie.genres.any(MovieGenre.genre == genre)) \
-                    .all()
-                movies.extend(genre_movies)
-            movies = random.sample(movies, k=min(15, len(movies)))
+            all_movies = Movie.query.all()
+            movies = random.sample(all_movies, k=10)
 
         else:
-            # print("SELECTED GENRES", selected_genres)
             # Filter movies based on all selected genres
             movies_query = Movie.query
             for genre in selected_genres:
-                movies_query = movies_query.filter(Movie.genres.any(MovieGenre.genre == genre))
+                movies_query = Movie.query.filter(Movie.genres.any(MovieGenre.genre == genre))
 
             # Fetch the filtered movies from the query
             filtered_movies = movies_query.all()
 
-            # Sample 15 movies from the filtered list
-            movies = random.sample(filtered_movies, k=min(15, len(filtered_movies)))
+            # Sample 10 movies from the filtered list
+            movies = random.sample(filtered_movies, k=min(10, len(filtered_movies)))
 
-
-        return render_template("selected_genre.html", movies=movies)
+        return render_template("selected_genre.html", movies=movies, genres=selected_genres)
     
     if request.method == 'POST':
+        # small information block
         user_id = current_user.id
         ratings_data = request.form.getlist('ratings[]')
+        selected_genres = request.form.getlist('genres')
+
+        # if no genres were selected, just return 10 random movies to rate
+        if len(selected_genres) == 0:
+            all_movies = Movie.query.all()
+            movies = random.sample(all_movies, k=10)
+
+        else:
+            # Filter movies based on all selected genres
+            movies_query = Movie.query
+            for genre in selected_genres:
+                movies_query = Movie.query.filter(Movie.genres.any(MovieGenre.genre == genre))
+
+            # Fetch the filtered movies from the query
+            filtered_movies = movies_query.all()
+
+            # Sample 10 movies from the filtered list
+            movies = random.sample(filtered_movies, k=min(10, len(filtered_movies)))
 
         # Process the ratings
         for data in ratings_data:
@@ -140,36 +149,7 @@ def selected_genre():
             # If "I'm Done Rating" is clicked, redirect to a different page (e.g., home)
             return redirect(url_for('home_page'))
 
-        # If "Continue" is clicked, fetch new set of random movies
-        movie_count = db.session.query(Movie).count()
-        random_movies = Movie.query.offset(int(movie_count * random.random())).limit(5).all()
-        return render_template("selected_genre.html", movies=random_movies)
-
-    # Initial page load
-    movie_count = db.session.query(Movie).count()
-    random_movies = Movie.query.offset(int(movie_count * random.random())).limit(5).all()
-    return render_template("selected_genre.html", movies=random_movies)
-    
-    # elif request.method == 'POST':
-    #     # Handle POST request for submitting ratings
-    #     data = request.form
-    #     movie_id = data.get('movieId')
-    #     rating = data.get('rating')
-    #     print("movie_id", movie_id)
-    #     print("Rating", rating)
-
-    #     # Save the rating to the database (replace with your logic)
-    #     # For example, you might have a Ratings table in your database
-    #     # where you can store the movie ID, user ID, and rating.
-
-    #     # Dummy response for illustration purposes
-    #     response_data = {'status': 'success', 'message': 'Rating submitted successfully'}
-    #     return jsonify(response_data)
-
-    # else:
-    #     # Handle other HTTP methods if needed
-    #     return jsonify({'status': 'error', 'message': 'Method not allowed'})
-
+        return render_template("selected_genre.html", movies=movies, genres=selected_genres)
 
 # Start development web server
 if __name__ == '__main__':
