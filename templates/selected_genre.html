@@ -74,6 +74,10 @@
         .rating-options button:hover {
             background-color: #45a049; /* Hovered button color */
         }
+
+        .rated-button {
+        background-color: gray; /* Change the color to your preferred style */
+        }
     </style>
 
 </head>
@@ -134,6 +138,14 @@
 
     <script>
         function updateRating(movieId, rating) {
+            var button = document.getElementById('rating-' + movieId);
+
+            // Remove the class from all buttons with the same movieId
+            var buttons = document.querySelectorAll('.rating-options button[data-movie-id="' + movieId + '"]');
+            buttons.forEach(btn => btn.classList.remove('rated-button'));
+
+            // Add the class to the clicked button
+            button.classList.add('rated-button');
             document.getElementById('rating-' + movieId).value = movieId + ':' + rating;
         }
     </script>
@@ -173,7 +185,7 @@
                         <div class="rating-options">
                             <b> Rate the movie: </b>
                             {% for rating in range(1, 6) %}
-                                <button type="button" onclick="updateRating('{{ movie.id }}', '{{ rating }}')">{{ rating }} ⭑</button>
+                                <button type="button" data-movie-id="{{ movie.id }}" onclick="updateRating('{{ movie.id }}', '{{ rating }}')">{{ rating }} ⭑</button>
                             {% endfor %}
                         </div>
                         <input type="hidden" name="ratings[]" id="rating-{{ movie.id }}" value="{{ movie.id }}:None">

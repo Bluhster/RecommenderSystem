@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
 from flask_user import login_required, UserManager
+from knn import recommend_movies
 import random
 
 from models import db, User, Movie, MovieGenre, MovieTags, MovieRatings, UserRatings
@@ -43,8 +44,8 @@ def initdb_command():
 # The Home page is accessible to anyone
 @app.route('/')
 def home_page():
-    # render home.html template
 
+    # render home.html template
     return render_template("home.html")
 
 # The Members page is only accessible to authenticated users via the @login_required decorator
@@ -87,17 +88,7 @@ def selected_genre():
             movies = random.sample(all_movies, k=10)
 
         else:
-            all_movies = []
-            for genre in selected_genres:
-                ###############################################################
-                # this right here is slooooow maybe speed up?!
-                ###############################################################
-                # Perform the query for each genre and append the results to the list
-                movies_for_genre = Movie.query\
-                    .filter(Movie.genres.any(MovieGenre.genre == genre)) \
-                    .all()
-                all_movies.extend(movies_for_genre)
-
+            all_movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre.in_(selected_genres))).all()
             # Sample 10 movies from the filtered list
             movies = random.sample(all_movies, k=min(10, len(all_movies)))
 
@@ -115,16 +106,17 @@ def selected_genre():
             movies = random.sample(all_movies, k=10)
 
         else:
-            all_movies = []
-            for genre in selected_genres:
-                ###############################################################
-                # this right here is slooooow
-                ###############################################################
-                # Perform the query for each genre and append the results to the list
-                movies_for_genre = Movie.query \
-                    .filter(Movie.genres.any(MovieGenre.genre == genre)) \
-                    .all()
-                all_movies.extend(movies_for_genre)
+            # this is the newer version, but it is still slow?!
+            all_movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre.in_(selected_genres))).all()
+            # for genre in selected_genres:
+            #     ###############################################################
+            #     # this right here is slooooow
+            #     ###############################################################
+            #     # Perform the query for each genre and append the results to the list
+            #     movies_for_genre = Movie.query \
+            #         .filter(Movie.genres.any(MovieGenre.genre == genre)) \
+            #         .all()
+            #     all_movies.extend(movies_for_genre)
 
             # Sample 10 movies from the filtered list
             movies = random.sample(all_movies, k=min(10, len(all_movies)))
@@ -137,13 +129,22 @@ def selected_genre():
                 new_rating = UserRatings(user_id=user_id, movie_id=movie_id, rating=rating)
                 db.session.add(new_rating)
         db.session.commit()
-        flash('Your ratings have been submitted!', 'success')
 
         if 'done_rating' in request.form:
             # If "I'm Done Rating" is clicked, redirect to a different page (e.g., home)
-            return redirect(url_for('home_page'))
+            return redirect(url_for('recommendations_page'))
+        else:
+            flash('Your ratings have been submitted!', 'success')
 
         return render_template("selected_genre.html", movies=movies, genres=selected_genres)
+
+@app.route('/recommendations')
+@login_required  # User must be authenticated
+def recommendations_page():
+    
+    movie_ids = recommend_movies(nr_recommendations=5)
+    movies = Movie.query.filter(Movie.id.in_(movie_ids)).all()
+    return render_template("recommendations.html", movies=movies)
 
 # Start development web server
 if __name__ == '__main__':
