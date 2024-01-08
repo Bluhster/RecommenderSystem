@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px; /* Add margin to the body */
+
+        }
+
+        fieldset {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #9bd4a6; /* Add border with a color */
+            border-radius: 10px; /* Add border radius for rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+        }
+
+        legend {
+            font-size: 24px; /* Increase the font size of the legend */
+            font-weight: bold;
+            color: #3f5a36;
+            margin-bottom: 10px; /* Add margin at the bottom of the legend */
+        }
+
+        .MyCheckbox-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: space-between;
+        }
+        .MyCheckbox {
+            color: #3f5a36;
+            font-weight: bold;
+            width: calc(25% - 10px); /* 25% width with 10px spacing in between */
+            box-sizing: border-box;
+            margin-bottom: 10px;
+
+        }
+        .fancy-button {
+            background-color: #9bd4a6;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .fancy-button:hover {
+            background-color: #7aa88a;
+        }
+    </style>
+</head>
+<body>
+
+
+        <fieldset>
+
+            <legend>Choose Your favorite Genre/s:</legend>
+
+
+            <div class="MyCheckbox-container">
+                {% for genre in all_genres %}
+                    <div class= "MyCheckbox">
+                        <input type="checkbox" name="{{ genre }}" value="{{ genre }}">
+                        {{genre}}
+                     </div><br>
+                {% endfor %}
+            </div>
+
+
+
+       <button class="fancy-button" type="button" onclick="processOptions()">
+             Process Options
+       </button>
+
+
+        <div id="selectedOptions"></div>
+    </fieldset>
+    <script>
+        function processOptions() {
+            // Get all checkboxes
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            // Array to store selected options
+            var selectedOptions = [];
+
+            // Iterate through checkboxes and check if they are checked
+            checkboxes.forEach(function (checkbox) {
+                if (checkbox.checked) {
+                    selectedOptions.push(checkbox.name);
+                }
+            });
+
+            // Store selected options in localStorage
+            localStorage.setItem('selectedOptions', JSON.stringify(selectedOptions));
+
+            // Display selected options or redirect based on the context
+            // var selectedOptionsElement = document.getElementById('selectedOptions');
+            // if (selectedOptions.length == 0) {
+            //     selectedOptionsElement.innerHTML = 'No options selected.';
+            // }
+
+            // Redirect to the new page after a brief delay
+            var queryString = selectedOptions.map(option => 'selectedGenres=' + encodeURIComponent(option)).join('&');
+            var url = '/selected_genre?' + queryString;
+
+            window.location.href = url;
+
+        }
+
+
+    </script>
+
+</body>
+</html>

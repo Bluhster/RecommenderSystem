@@ -21,6 +21,19 @@ def check_and_read_data(db):
                         for genre in genres:  # add each genre to the movie_genre table
                             movie_genre = MovieGenre(movie_id=id, genre=genre)
                             db.session.add(movie_genre)
+            movies = csv.reader(movies, delimiter=',')
+            count = 0
+            for mov_row in movies:
+                if count > 0:
+                    try:
+                        id = mov_row[0]
+                        title = mov_row[1]
+                        movie = Movie(id=id, title=title)
+                        db.session.add(movie)
+                        genres = mov_row[2].split('|')  # genres is a list of genres
+                        for genre in genres:  # add each genre to the movie_genre table
+                            movie_genre = MovieGenre(movie_id=id, genre=genre)
+                            db.session.add(movie_genre)
 
                         db.session.commit()  # save data to database
                     except IntegrityError:
@@ -30,8 +43,16 @@ def check_and_read_data(db):
                 count += 1
                 if count % 100 == 0:
                     print(count, " movies read")
+                        db.session.commit()  # save data to database
+                    except IntegrityError:
+                        print("Ignoring duplicate movie: " + title)
+                        db.session.rollback()
+                        pass
+                count += 1
+                if count % 100 == 0:
+                    print(count, " movies read")
 
-        # read movies from csv
+        # read tags from csv
         with open('data/tags.csv', newline='', encoding='utf8') as tags:
             tags = csv.reader(tags, delimiter=',')
             count = 0
@@ -43,7 +64,6 @@ def check_and_read_data(db):
                         db.session.add(mov_tag)
                         db.session.commit()  # save data to database
                     except IntegrityError:
-                        #print("Ignoring duplicate movie: ")
                         db.session.rollback()
                         pass
                 count += 1
@@ -63,7 +83,6 @@ def check_and_read_data(db):
                         db.session.add(movie_links)
                         db.session.commit()
                     except IntegrityError:
-                        #print("Ignoring duplicate movie: ")
                         db.session.rollback()
                         pass
                 count += 1
@@ -83,9 +102,10 @@ def check_and_read_data(db):
                         db.session.add(movie_rating)
                         db.session.commit()
                     except IntegrityError:
-                        #print("Ignoring duplicate movie: ")
                         db.session.rollback()
                         pass
                 count += 1
                 if count % 1000 == 0:
                     print(count, " ratings added")
+
+

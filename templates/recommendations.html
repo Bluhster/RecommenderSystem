@@ -40,7 +40,7 @@
 
 <body>
 <div class="container">
-    <h2>Random Movies</h2>
+    <h2>Here are 5 recommendations for you based on all your ratings</h2>
     <br>
     {% for movie in movies %}
                 <div class="panel panel-success" style="border: 2px solid green">
@@ -77,13 +77,13 @@
     {% endfor %}
 </div>
 
-<button id="loadMoreBtn" onclick="navigateToDifferentView()">Show 10 other random Movies</button>
+<button id="loadMoreBtn" onclick="navigateToDifferentView()">Back to Home</button>
 </div>
 
 <script>
     function navigateToDifferentView() {
         // navigate to itself to present different 10 movies
-        window.location.href = '/movies';
+        window.location.href = '/';
     }
 </script>
 </body>

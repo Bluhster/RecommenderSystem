@@ -1,0 +1,213 @@
+{% extends "flask_user_layout.html" %}
+{% block content %}
+
+<head>
+    <style>
+
+        body {
+            margin: 20px;
+            font-family: "Arial", sans-serif;
+
+        }
+        .green-box {
+            background-color: green;
+            color: white;
+            padding: 6px;
+            margin: 3px;
+            border-radius: 5px;
+            font-size: 10px;
+        }
+        .links a{
+            color: dimgray;
+            font-style: italic;
+        }
+
+        /* Styling for the "Back" button */
+        #backButton {
+            position: fixed; /* Set the button position to absolute */
+            bottom: 20px; /* Set the distance from the bottom */
+            right: 20px; /* Set the distance from the left */
+            padding: 10px 20px;
+            background-color: #9bd4a6;
+            color: #ffffff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1; /* Ensure the button is above other content */
+        }
+
+        #backButton:hover {
+            background-color: #7aa88a;
+        }
+        #selectedOptions {
+            margin-bottom: 25px;
+            font-size: 16px;
+            color: #333;
+
+        }
+        #selectedOptions span {
+            font-weight: bold;
+            color: green; /* You can adjust the color to your preference */
+        }
+        #nomoviesfound {
+            color: darkred;
+            font-size: 20px;
+        }
+        .rating-options {
+            display: flex;
+            gap: 2px; /* Adjust the space between buttons */
+            margin-left: 5px;
+        }
+
+        .rating-options button {
+            background-color: #4CAF50; /* Green color */
+            color: white; /* Text color */
+            padding: 3px 6px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            margin-left: 5px;
+        }
+
+        .rating-options button:hover {
+            background-color: #45a049; /* Hovered button color */
+        }
+
+        .rated-button {
+        background-color: gray; /* Change the color to your preferred style */
+        }
+    </style>
+
+</head>
+<!--    <h2>Movies</h2>-->
+    <br>
+
+    <!-- Display selected options from localStorage -->
+    <div id="selectedOptions"> These are the options</div>
+
+    <!-- Back button to go back to the previous page -->
+    <button id="backButton"  onclick="goBack()">
+        Back to Genre Selection
+    </button>
+
+
+
+    <script>
+        function goBack() {
+            window.location.href = '/filter_genre';
+        }
+
+        // Retrieve selected options from localStorage
+        var selectedOptions = JSON.parse(localStorage.getItem("selectedOptions"));
+
+        // Display selected options in the designated area
+        var selectedOptionsElement = document.getElementById("selectedOptions");
+        // selectedOptionsElement.innerHTML = 'Selected Optionsss: ' + (selectedOptions ? selectedOptions.join(', ') : 'None');
+
+        if (selectedOptions && selectedOptions.length > 0) {
+            var formattedOptions = selectedOptions.map(option => `<span>${option}</span>`).join(", ");
+            selectedOptionsElement.innerHTML = `Selected Options: ${formattedOptions}`;
+        } else {
+            selectedOptionsElement.innerHTML = 'No Genres selected';
+        }
+        console.log('Selected Options:', selectedOptions);
+
+
+        var queryString = Object.keys(selectedOptions).map(key => key + "=" + encodeURIComponent(selectedOptions[key])).join('&');
+        var url = '/selected_genre?' + queryString;
+
+
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Response from server:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+         function rateMovie(movieId, rating) {
+             // You can send the movie ID and rating to the server here using fetch or another method
+             console.log(`Rated movie ${movieId} with ${rating} stars`);
+
+         }
+
+    </script>
+
+    <script>
+        function updateRating(movieId, rating) {
+            var button = document.getElementById('rating-' + movieId);
+
+            // Remove the class from all buttons with the same movieId
+            var buttons = document.querySelectorAll('.rating-options button[data-movie-id="' + movieId + '"]');
+            buttons.forEach(btn => btn.classList.remove('rated-button'));
+
+            // Add the class to the clicked button
+            button.classList.add('rated-button');
+            document.getElementById('rating-' + movieId).value = movieId + ':' + rating;
+        }
+    </script>
+
+<div class="container">
+    <h2>Rate Movies</h2>
+    <form method="POST" action="{{ url_for('selected_genre') }}">
+        {% if movies %}
+            {% for movie in movies %}
+                <div class="panel panel-success" style="border: 2px solid green">
+                    <div class="panel-heading"><b>{{ movie.title }}</b></div>
+                    <div class="panel-body">
+                        <p>
+                            <b> Genres: </b>
+                            {% for g in movie.genres %}
+                                <span class="green-box">{{ g.genre }}</span>
+                            {% endfor %}
+                            <br>
+                        </p>
+
+                        {% if movie.tags %}
+                            <b> Tags: </b>
+                            {% for t in movie.tags %}
+                                <span class="label label-success">{{ t.tag }}</span>
+                            {% endfor %}
+                            <br><br>
+                        {% endif %}
+                        <!-- Movie Links -->
+                        <div class="links">
+                            {% for link in movie.links %}
+                                <a href="{{ link.imdb }}" target="_blank">Link to review on IMDb</a>
+                                <br>
+                                <a href="{{ link.tmdb }}" target="_blank">Link to review on TMDb</a>
+                            {% endfor %}
+                        </div>
+                        <br>
+                        <div class="rating-options">
+                            <b> Rate the movie: </b>
+                            {% for rating in range(1, 6) %}
+                                <button type="button" data-movie-id="{{ movie.id }}" onclick="updateRating('{{ movie.id }}', '{{ rating }}')">{{ rating }} ⭑</button>
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="ratings[]" id="rating-{{ movie.id }}" value="{{ movie.id }}:None">
+                        
+                    </div>
+                </div>
+            {% endfor %}
+            {% for genre in genres %}
+                <input type="hidden" name="genres" value="{{ genre }}">
+            {% endfor %}
+            <input type="submit" name="continue" value="Continue">
+            <input type="submit" name="done_rating" value="I'm Done Rating">
+        </form>
+    </div>
+        {% else %}
+            <div id="nomoviesfound">
+                There are no movies matching your request!
+                <br>
+                Try different Genre/s
+            </div>
+        {% endif %}
+
+</div>
+
+{% endblock %}
