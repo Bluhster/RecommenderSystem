@@ -125,9 +125,11 @@ def selected_genre():
         for data in ratings_data:
             movie_id, rating = data.split(':')
             if rating != 'None':  # Filter out unrated movies
+            #     rating = 0.0
+            # else:
                 rating = float(rating)
-                new_rating = UserRatings(user_id=user_id, movie_id=movie_id, rating=rating)
-                db.session.add(new_rating)
+            new_rating = UserRatings(user_id=user_id, movie_id=movie_id, rating=rating)
+            db.session.add(new_rating)
         db.session.commit()
 
         if 'done_rating' in request.form:
