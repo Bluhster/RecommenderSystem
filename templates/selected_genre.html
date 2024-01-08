@@ -9,6 +9,10 @@
             font-family: "Arial", sans-serif;
 
         }
+        h2 {
+            color: darkgreen;
+            /* Add any additional styles for the title */
+        }
         .green-box {
             background-color: green;
             color: white;
@@ -25,7 +29,7 @@
         /* Styling for the "Back" button */
         #backButton {
             position: fixed; /* Set the button position to absolute */
-            bottom: 20px; /* Set the distance from the bottom */
+            bottom: 50px; /* Set the distance from the bottom */
             right: 20px; /* Set the distance from the left */
             padding: 10px 20px;
             background-color: #9bd4a6;
@@ -75,8 +79,51 @@
             background-color: #45a049; /* Hovered button color */
         }
 
-        .rated-button {
-        background-color: gray; /* Change the color to your preferred style */
+
+        /* Styling for rated buttons */
+        .rating-options button.rated-button {
+            background-color: gray;
+            /* Add any additional styles for rated buttons */
+        }
+
+        /* Styling for disabled buttons */
+        .rating-options button[disabled] {
+            opacity: 0.5; /* Adjust the opacity for the disabled state */
+            cursor: not-allowed;
+        }
+
+        /* Styling for Continue and Done buttons */
+        .continue-button, .done-button {
+            position: fixed;
+            bottom: 50px;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1;
+        }
+
+        /* Styling for Continue button */
+        .continue-button {
+            left: 200px;
+            background-color: #9bd4a6;
+            color: #ffffff;
+        }
+
+        .continue-button:hover {
+            background-color: #7aa88a;
+        }
+
+        /* Styling for Done Rating button */
+        .done-button {
+            left: 20px;
+            background-color: #9bd4a6;
+            color: #ffffff;
+        }
+
+        .done-button:hover {
+            background-color: #7aa88a;
         }
     </style>
 
@@ -142,12 +189,17 @@
 
             // Remove the class from all buttons with the same movieId
             var buttons = document.querySelectorAll('.rating-options button[data-movie-id="' + movieId + '"]');
-            buttons.forEach(btn => btn.classList.remove('rated-button'));
+            buttons.forEach(btn => {
+                btn.classList.remove('rated-button');
+                btn.setAttribute('disabled', 'disabled'); // Disable the button
+            });
 
             // Add the class to the clicked button
             button.classList.add('rated-button');
+            button.setAttribute('disabled', 'disabled'); // Disable the clicked button
             document.getElementById('rating-' + movieId).value = movieId + ':' + rating;
         }
+
     </script>
 
 <div class="container">
@@ -196,8 +248,8 @@
             {% for genre in genres %}
                 <input type="hidden" name="genres" value="{{ genre }}">
             {% endfor %}
-            <input type="submit" name="continue" value="Continue">
-            <input type="submit" name="done_rating" value="I'm Done Rating">
+            <input class="continue-button" type="submit" name="continue" value="Continue">
+            <input class="done-button" type="submit" name="done_rating" value="I'm Done Rating">
         </form>
     </div>
         {% else %}
