@@ -5,7 +5,7 @@ from sklearn.neighbors import NearestNeighbors
 from scipy.spatial.distance import cosine
 from sklearn.decomposition import TruncatedSVD
 
-def recommend_movies(nr_recommendations = 5):
+def recommend_movies(current_user, nr_recommendations = 5):
     # Load sqlite file
     conn = sqlite3.connect('instance/movie_recommender.sqlite')
     cursor = conn.cursor()
@@ -54,34 +54,44 @@ def recommend_movies(nr_recommendations = 5):
     movies_df_user.columns = movies
 
     for user in users_user:
-        indices = movie_ratings_user[movie_ratings_user['user_id']==user]['movie_id'].values
-        ratings = movie_ratings_user[movie_ratings_user['user_id']==user]['rating'].values
-        movies_df_user.loc[user, indices] = ratings
+        #print(user)
+        if user == current_user:
+            print("this is user: ", user)
+            # len error here?!
+            indices = movie_ratings_user[movie_ratings_user['user_id']==user]['movie_id'].values
+            ratings = movie_ratings_user[movie_ratings_user['user_id']==user]['rating'].values
+            movies_df_user.loc[user, indices] = ratings
 
-    # Knn using cosine similarity
-    knn = NearestNeighbors(metric='cosine', algorithm='auto', n_neighbors=5, n_jobs=-1)
-    knn.fit(movies_df)
-    distances, indices = knn.kneighbors(movies_df_user, n_neighbors=5)
-    #print(indices)
+    print("movie_ratings: ", movies_df_user)
+    if movies_df_user.empty:
+        recommended_ids = []
+        is_empty = True
+    else:
+        is_empty = False
+        # Knn using cosine similarity
+        knn = NearestNeighbors(metric='cosine', algorithm='auto', n_neighbors=5, n_jobs=-1)
+        knn.fit(movies_df)
+        distances, indices = knn.kneighbors(movies_df_user, n_neighbors=5)
+        #print(indices)
 
-    # Assuming movie_ratings is your DataFrame, and indices is defined earlier
-    filtered_ratings = movie_ratings[movie_ratings['user_id'] == indices[0][0]]
-    # Now sort the filtered DataFrame by 'rating' column
-    sorted_ratings = filtered_ratings.sort_values(by='rating', ascending=False)
+        # Assuming movie_ratings is your DataFrame, and indices is defined earlier
+        filtered_ratings = movie_ratings[movie_ratings['user_id'] == indices[0][0]]
+        # Now sort the filtered DataFrame by 'rating' column
+        sorted_ratings = filtered_ratings.sort_values(by='rating', ascending=False)
 
-    movies = dataframes['movies']
+        movies = dataframes['movies']
 
-    # use multiple lists and for loops to filter out the nr_recommendations best rated movie_ids
-    recommendations = []
-    for i in range(nr_recommendations):
-        recommendation = movies[movies.id==sorted_ratings.movie_id.values[i]]
-        recommendations.append((recommendation.id.values, recommendation.title.values))
+        # use multiple lists and for loops to filter out the nr_recommendations best rated movie_ids
+        recommendations = []
+        for i in range(nr_recommendations):
+            recommendation = movies[movies.id==sorted_ratings.movie_id.values[i]]
+            recommendations.append((recommendation.id.values, recommendation.title.values))
+        
+        recommended_ids = []
+        for element in recommendations:
+            recommended_ids.append(int(element[0][0]))    
     
-    recommended_ids = []
-    for element in recommendations:
-        recommended_ids.append(int(element[0][0]))    
-    
-    return recommended_ids
+    return recommended_ids, is_empty
 
 
 

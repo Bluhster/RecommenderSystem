@@ -1,8 +1,9 @@
 # Contains parts from: https://flask-user.readthedocs.io/en/latest/quickstart_app.html
 
-from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
+from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_user import login_required, UserManager
 from knn import recommend_movies
+import time
 import random
 
 from models import db, User, Movie, MovieGenre, MovieTags, MovieRatings, UserRatings
@@ -124,10 +125,12 @@ def selected_genre():
         # Process the ratings
         for data in ratings_data:
             movie_id, rating = data.split(':')
-            if rating != 'None':  # Filter out unrated movies
+            if rating == 'None':  # Filter out unrated movies
+                rating = 0.0
+            else:
                 rating = float(rating)
-                new_rating = UserRatings(user_id=user_id, movie_id=movie_id, rating=rating)
-                db.session.add(new_rating)
+            new_rating = UserRatings(user_id=user_id, movie_id=movie_id, rating=rating)
+            db.session.add(new_rating)
         db.session.commit()
 
         if 'done_rating' in request.form:
@@ -141,10 +144,19 @@ def selected_genre():
 @app.route('/recommendations')
 @login_required  # User must be authenticated
 def recommendations_page():
-    
-    movie_ids = recommend_movies(nr_recommendations=5)
-    movies = Movie.query.filter(Movie.id.in_(movie_ids)).all()
-    return render_template("recommendations.html", movies=movies)
+
+    user = current_user
+    movie_ids, is_empty = recommend_movies(user.id, nr_recommendations=5)
+    if is_empty:
+        all_genres = ["Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama",
+                  "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War",
+                  "Western"]
+        flash("You have not submitted any ratings yet!")
+        return render_template("filter_genre.html", all_genres=all_genres)
+    else:
+
+        movies = Movie.query.filter(Movie.id.in_(movie_ids)).all()
+        return render_template("recommendations.html", movies=movies)
 
 # Start development web server
 if __name__ == '__main__':
