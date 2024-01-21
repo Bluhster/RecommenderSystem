@@ -1,4 +1,8 @@
 flask
 flask-sqlalchemy
+pandas
+numpy
+scikit-learn
+scipy
 flask-user==1.0.2.2
 
