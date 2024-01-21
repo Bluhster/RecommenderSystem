@@ -25,10 +25,10 @@ class ConfigClass(object):
     USER_ENABLE_USERNAME = True  # Enable username authentication
     USER_REQUIRE_RETYPE_PASSWORD = True  # Simplify register form
 
-    USER_AFTER_REGISTER_ENDPOINT = 'home.html'
-    USER_AFTER_CONFIRM_ENDPOINT = 'home.html'
-    USER_AFTER_LOGIN_ENDPOINT = 'home.html'
-    USER_AFTER_LOGOUT_ENDPOINT = 'home.html'
+    USER_AFTER_REGISTER_ENDPOINT = 'home_page'
+    USER_AFTER_CONFIRM_ENDPOINT = 'home_page'
+    USER_AFTER_LOGIN_ENDPOINT = 'home_page'
+    USER_AFTER_LOGOUT_ENDPOINT = 'home_page'
 
     # use chown www-data movie_recommender.sqlite in console to make the database usable on server
 
