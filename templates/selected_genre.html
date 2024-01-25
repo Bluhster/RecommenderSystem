@@ -88,16 +88,15 @@
     <div id="selectedOptions"> These are the options</div>
 
     <!-- Back button to go back to the previous page -->
-    <button id="backButton"  onclick="goBack()">
-        Back to Genre Selection
-    </button>
+    <button id="backButton" onclick="navigateToDifferentView()">Back to Genre Selection</button>
 
 
 
     <script>
-        function goBack() {
-            window.location.href = {{ url_for('filter_genre') }};
-
+        function navigateToDifferentView() {
+        // navigate to itself to present different 10 movies
+        window.location.href = {{ url_for('filter_genre') }};
+        }
         // Retrieve selected options from localStorage
         var selectedOptions = JSON.parse(localStorage.getItem("selectedOptions"));
 
@@ -126,7 +125,6 @@
         .catch(error => {
             console.error('Error:', error);
         });
-        }
          function rateMovie(movieId, rating) {
              // You can send the movie ID and rating to the server here using fetch or another method
              console.log(`Rated movie ${movieId} with ${rating} stars`);

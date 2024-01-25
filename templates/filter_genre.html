@@ -82,7 +82,7 @@
         <div id="selectedOptions"></div>
     </fieldset>
     <script>
-        var selectedGenreUrl = "{{ selected_genre_url }}";
+        var selectedGenreUrl = "{{ url_for('selected_genre') }}"
         function processOptions() {
             // Get all checkboxes
             var checkboxes = document.querySelectorAll('input[type="checkbox"]');
