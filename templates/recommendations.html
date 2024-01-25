@@ -2,6 +2,7 @@
 {% block content %}
 <head>
     <style>
+        /*define the styles for all objects in the html*/
         .green-box {
             background-color: green;
             color: white;
@@ -15,10 +16,8 @@
             font-style: italic;
         }
 
-        /* Add your existing styles here */
-
-        /* Styling for the "Back" button */
-        #loadMoreBtn {
+        /* Style for the "back to home" button */
+        #homebutton {
             position: fixed; /* Set the button position to absolute */
             bottom: 20px; /* Set the distance from the bottom */
             right: 20px; /* Set the distance from the left */
@@ -31,29 +30,33 @@
             border-radius: 5px;
             z-index: 1; /* Ensure the button is above other content */
         }
-
-        #loadMoreBtn:hover {
+        /* make the button hover */
+        #homebutton:hover {
             background-color: #7aa88a;
         }
     </style>
 </head>
 
+<!-- define the frame and other optics to display the found recommendations -->
 <body>
 <div class="container">
     <h2>Here are five recommendations for you</h2>
     <br>
     {% for movie in movies %}
+                <!-- show all information for each movie -->
                 <div class="panel panel-success" style="border: 2px solid green">
                     <div class="panel-heading"><b>{{ movie.title }}</b></div>
                     <div class="panel-body">
                         <p>
+                            <!-- Movie genres -->
                             <b> Genres: </b>
                             {% for g in movie.genres %}
                                 <span class="green-box">{{ g.genre }}</span>
                             {% endfor %}
                             <br>
                         </p>
-
+                        
+                        <!-- Movie tags (if given) -->
                         {% if movie.tags %}
                             <b> Tags: </b>
                             {% for t in movie.tags %}
@@ -70,19 +73,19 @@
                                 <a href="{{ link.tmdb }}" target="_blank">Link to review on TMDb</a>
                             {% endfor %}
                         </div>
+
                         <br>
-                        
                     </div>
                 </div>
     {% endfor %}
 </div>
 
-<button id="loadMoreBtn" onclick="navigateToDifferentView()">Back to Home</button>
+<button id="homebutton" onclick="backtohome()">Back to Home</button>
 </div>
 
 <script>
-    function navigateToDifferentView() {
-        // navigate to itself to present different 10 movies
+    function backtohome() {
+        // navigate to the home page
         window.location.href = "{{ url_for('home_page') }}";
     }
 </script>
