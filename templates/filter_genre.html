@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        /*define the styles for all objects in the html*/
         body {
             font-family: Arial, sans-serif;
             margin: 20px; /* Add margin to the body */
+
         }
 
         fieldset {
@@ -24,7 +24,7 @@
             color: #3f5a36;
             margin-bottom: 10px; /* Add margin at the bottom of the legend */
         }
-        /*style for the check boxes*/
+
         .MyCheckbox-container {
             display: flex;
             flex-wrap: wrap;
@@ -39,7 +39,6 @@
             margin-bottom: 10px;
 
         }
-        /*style for the progress button*/
         .fancy-button {
             background-color: #9bd4a6;
             color: #ffffff;
@@ -50,59 +49,74 @@
             border-radius: 5px;
             margin-top: 20px;
         }
+
+        .fancy-button:hover {
+            background-color: #7aa88a;
+        }
     </style>
 </head>
-
 <body>
-<fieldset>
-    <legend>Choose Your favorite Genre/s:</legend>
-    
-    <div class="MyCheckbox-container">
-        {% for genre in all_genres %}
-            <div class= "MyCheckbox">
-                
-                <input type="checkbox" name="{{ genre }}" value="{{ genre }}">
-                {{genre}}
-                
-            </div><br>
-        {% endfor %}
-    </div>
 
-<!-- button to continue to the next view -->
-<button class="fancy-button" type="button" onclick="processOptions()">
-        Process Options
-</button>
-<div id="selectedOptions"></div>
-</fieldset>
 
-<script>
-var selectedGenreUrl = "{{ url_for('selected_genre') }}"
-function processOptions() {
-    // Get all checkboxes
-    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        <fieldset>
 
-    // Array to store selected options
-    var selectedOptions = [];
+            <legend>Choose Your favorite Genre/s:</legend>
 
-    // Iterate through checkboxes and check if they are checked
-    checkboxes.forEach(function (checkbox) {
-        if (checkbox.checked) {
-            selectedOptions.push(checkbox.name);
+
+            <div class="MyCheckbox-container">
+                {% for genre in all_genres %}
+                    <div class= "MyCheckbox">
+                        <input type="checkbox" name="{{ genre }}" value="{{ genre }}">
+                        {{genre}}
+                     </div><br>
+                {% endfor %}
+            </div>
+
+
+
+       <button class="fancy-button" type="button" onclick="processOptions()">
+             Process Options
+       </button>
+
+
+        <div id="selectedOptions"></div>
+    </fieldset>
+    <script>
+        var selectedGenreUrl = "{{ selected_genre_url }}";
+        function processOptions() {
+            // Get all checkboxes
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            // Array to store selected options
+            var selectedOptions = [];
+
+            // Iterate through checkboxes and check if they are checked
+            checkboxes.forEach(function (checkbox) {
+                if (checkbox.checked) {
+                    selectedOptions.push(checkbox.name);
+                }
+            });
+
+            // Store selected options in localStorage
+            localStorage.setItem('selectedOptions', JSON.stringify(selectedOptions));
+
+            // Display selected options or redirect based on the context
+            // var selectedOptionsElement = document.getElementById('selectedOptions');
+            // if (selectedOptions.length == 0) {
+            //     selectedOptionsElement.innerHTML = 'No options selected.';
+            // }
+
+            // Redirect to the new page after a brief delay
+            var queryString = selectedOptions.map(option => 'selectedGenres=' + encodeURIComponent(option)).join('&');
+            var url = selectedGenreUrl + '?' + queryString;
+
+            window.location.href = url;
+
         }
-    });
 
-    // Store selected options in localStorage
-    localStorage.setItem('selectedOptions', JSON.stringify(selectedOptions));
 
-    // Redirect to the new page with the selected genres as query
-    var queryString = selectedOptions.map(option => 'selectedGenres=' + encodeURIComponent(option)).join('&');
-    var url = selectedGenreUrl + '?' + queryString;
-
-    window.location.href = url;
-    }
-
-</script>
+    </script>
 
 </body>
-
+</html>
 {% endblock %}

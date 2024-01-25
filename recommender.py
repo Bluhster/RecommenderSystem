@@ -24,11 +24,13 @@ class ConfigClass(object):
     USER_ENABLE_EMAIL = False  # Disable email authentication
     USER_ENABLE_USERNAME = True  # Enable username authentication
     USER_REQUIRE_RETYPE_PASSWORD = True  # Simplify register form
-    # setting for redirects on the server
+
     USER_AFTER_REGISTER_ENDPOINT = 'home_page'
     USER_AFTER_CONFIRM_ENDPOINT = 'home_page'
     USER_AFTER_LOGIN_ENDPOINT = 'home_page'
     USER_AFTER_LOGOUT_ENDPOINT = 'home_page'
+
+    # use chown www-data movie_recommender.sqlite in console to make the database usable on server
 
 # Create Flask app
 app = Flask(__name__)
@@ -38,7 +40,7 @@ db.init_app(app)  # initialize database
 db.create_all()  # create database if necessary
 user_manager = UserManager(app, db, User)  # initialize Flask-User management
 
-# function to create the whole database from the csv files in data folder
+
 @app.cli.command('initdb')
 def initdb_command():
     global db
@@ -50,9 +52,10 @@ def initdb_command():
 @app.route('/')
 def home_page():
 
+    # render home.html template
     return render_template("home.html")
 
-
+# The Members page is only accessible to authenticated users via the @login_required decorator
 @app.route('/movies')
 @login_required  # User must be authenticated
 def movies_page():
@@ -63,19 +66,21 @@ def movies_page():
     return render_template("movies.html", movies=movies)
 
 
+# The Members page is only accessible to authenticated users via the @login_required decorator
 @app.route('/filter_genre')
 @login_required  # User must be authenticated
 def filter_genre():
-    # present all available genres to choose from
+    # choose genres from all available genres
     all_genres = ["Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama",
                   "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War",
                   "Western"]
 
-    return render_template("filter_genre.html", all_genres=all_genres)
+    selected_genre_url = url_for('selected_genre')
+    return render_template("filter_genre.html", all_genres=all_genres, selected_genre_url=selected_genre_url)
 
 
 @app.route('/selected_genre', methods=['GET', 'POST'])
-@login_required # User must be authenticated
+@login_required
 def selected_genre():
     if request.method == 'GET':
         # retrieve selected genres from previous view
@@ -86,9 +91,8 @@ def selected_genre():
             all_movies = Movie.query.all()
             movies = random.sample(all_movies, k=10)
 
-        # if genres were selected choose 10 movies that each include at least one of the chosen genres
         else:
-            all_movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre.in_(selected_genres))).distinct(Movie.id).all()
+            all_movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre.in_(selected_genres))).all()
             # Sample 10 movies from the filtered list
             movies = random.sample(all_movies, k=min(10, len(all_movies)))
 
@@ -105,13 +109,14 @@ def selected_genre():
             all_movies = Movie.query.all()
             movies = random.sample(all_movies, k=10)
 
-        # if genres were selected choose 10 movies that each include at least one of the chosen genres
         else:
-            all_movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre.in_(selected_genres))).distinct(Movie.id).all()
+            # query the database for all movies with the given genre/s
+            all_movies = Movie.query.filter(Movie.genres.any(MovieGenre.genre.in_(selected_genres))).all()
+
             # Sample 10 movies from the filtered list
             movies = random.sample(all_movies, k=min(10, len(all_movies)))
 
-        # Process the ratings and add them to the table 'user_ratings' in the database
+        # Process the ratings
         for data in ratings_data:
             movie_id, rating = data.split(':')
             if rating != 'None':  # Filter out unrated movies
@@ -120,12 +125,9 @@ def selected_genre():
                 db.session.add(new_rating)
         db.session.commit()
 
-        # If "I'm Done Rating" is clicked, redirect to the recommendations
         if 'done_rating' in request.form:
-            
+            # If "I'm Done Rating" is clicked, redirect to a different page (e.g., home)
             return redirect(url_for('recommendations_page'))
-        
-        # otherwise continue with the rating
         else:
             flash('Your ratings have been submitted!', 'success')
 
@@ -134,11 +136,9 @@ def selected_genre():
 @app.route('/recommendations')
 @login_required  # User must be authenticated
 def recommendations_page():
-    # get ids of recommended movies
+    
     movie_ids = recommend_movies(nr_recommendations=5)
-    # query the database for the movies to display
     movies = Movie.query.filter(Movie.id.in_(movie_ids)).all()
-
     return render_template("recommendations.html", movies=movies)
 
 # Start development web server
