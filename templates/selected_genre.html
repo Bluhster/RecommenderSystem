@@ -95,7 +95,7 @@
     <script>
         function navigateToDifferentView() {
         // navigate to itself to present different 10 movies
-        window.location.href = {{ url_for('filter_genre') }};
+        window.location.href = "{{ url_for('filter_genre') }}";
         }
         // Retrieve selected options from localStorage
         var selectedOptions = JSON.parse(localStorage.getItem("selectedOptions"));
