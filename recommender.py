@@ -75,7 +75,8 @@ def filter_genre():
                   "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War",
                   "Western"]
 
-    return render_template("filter_genre.html", all_genres=all_genres)
+    selected_genre_url = url_for('selected_genre')
+    return render_template("filter_genre.html", all_genres=all_genres, selected_genre_url=selected_genre_url)
 
 
 @app.route('/selected_genre', methods=['GET', 'POST'])

@@ -82,6 +82,7 @@
         <div id="selectedOptions"></div>
     </fieldset>
     <script>
+        var selectedGenreUrl = "{{ selected_genre_url }}";
         function processOptions() {
             // Get all checkboxes
             var checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -107,7 +108,7 @@
 
             // Redirect to the new page after a brief delay
             var queryString = selectedOptions.map(option => 'selectedGenres=' + encodeURIComponent(option)).join('&');
-            var url = '/selected_genre?' + queryString;
+            var url = selectedGenreUrl + '?' + queryString;
 
             window.location.href = url;
 
