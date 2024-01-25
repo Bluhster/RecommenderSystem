@@ -40,6 +40,41 @@
         #backButton:hover {
             background-color: #7aa88a;
         }
+        #doneRating {
+            position: fixed; /* Set the button position to absolute */
+            bottom: 20px; /* Set the distance from the bottom */
+            right: 240px; /* Set the distance from the left */
+            padding: 10px 20px;
+            background-color: #9bd4a6;
+            color: #ffffff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1; /* Ensure the button is above other content */
+        }
+
+        #doneRating:hover {
+            background-color: #7aa88a;
+        }
+        #continueRating {
+            position: fixed; /* Set the button position to absolute */
+            bottom: 20px; /* Set the distance from the bottom */
+            right: 510px; /* Set the distance from the left */
+            padding: 10px 20px;
+            background-color: #9bd4a6;
+            color: #ffffff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1; /* Ensure the button is above other content */
+        }
+
+        #continueRating:hover {
+            background-color: #7aa88a;
+        }
+
         #selectedOptions {
             margin-bottom: 25px;
             font-size: 16px;
@@ -192,8 +227,8 @@
             {% for genre in genres %}
                 <input type="hidden" name="genres" value="{{ genre }}">
             {% endfor %}
-            <input type="submit" name="continue" value="Continue">
-            <input type="submit" name="done_rating" value="I'm Done Rating">
+            <button id="doneRating" onclick="showrecs()" name="done_rating">Show me the recommendations</button>
+            <button id="continueRating" name="continue">Continue rating</button>
         </form>
     </div>
         {% else %}
@@ -205,5 +240,12 @@
         {% endif %}
 
 </div>
+
+<script>
+    function showrecs() {
+        // navigate to itself to present different 10 movies
+        window.location.href = "{{ url_for('recommendations_page') }}";
+    }
+</script>
 
 {% endblock %}
