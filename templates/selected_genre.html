@@ -97,7 +97,6 @@
     <script>
         function goBack() {
             window.location.href = {{ url_for('filter_genre') }};
-        }
 
         // Retrieve selected options from localStorage
         var selectedOptions = JSON.parse(localStorage.getItem("selectedOptions"));
@@ -127,11 +126,10 @@
         .catch(error => {
             console.error('Error:', error);
         });
-
+        }
          function rateMovie(movieId, rating) {
              // You can send the movie ID and rating to the server here using fetch or another method
              console.log(`Rated movie ${movieId} with ${rating} stars`);
-
          }
 
     </script>
