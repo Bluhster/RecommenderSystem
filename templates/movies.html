@@ -15,8 +15,6 @@
             font-style: italic;
         }
 
-        /* Add your existing styles here */
-
         /* Styling for the "Back" button */
         #loadMoreBtn {
             position: fixed; /* Set the button position to absolute */
@@ -77,14 +75,18 @@
     {% endfor %}
 </div>
 
-<button id="loadMoreBtn" onclick="navigateToDifferentView()">Show 10 other random Movies</button>
+<button id="loadMoreBtn" onclick="navigateToDifferentView()">Show new random Movies</button>
 </div>
 
 <script>
     function navigateToDifferentView() {
-        // navigate to itself to present different 10 movies
-        window.location.href = {{url_for('movies_page')}};
-    }
+        // Reload the page
+        location.reload();
+
+        // Scroll to the top of the page
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
+    };
 </script>
 </body>
 {% endblock %}
