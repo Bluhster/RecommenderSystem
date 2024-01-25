@@ -126,9 +126,8 @@ def selected_genre():
         db.session.commit()
 
         if 'done_rating' in request.form:
-            movie_ids = recommend_movies(nr_recommendations=5)
-            movies = Movie.query.filter(Movie.id.in_(movie_ids)).all()
-            return render_template("recommendations.html", movies=movies)
+            # If "I'm Done Rating" is clicked, redirect to a different page (e.g., home)
+            return redirect(url_for('recommendations_page'))
         else:
             flash('Your ratings have been submitted!', 'success')
 
