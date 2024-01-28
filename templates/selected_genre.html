@@ -9,6 +9,7 @@
             font-family: "Arial", sans-serif;
 
         }
+
         .green-box {
             background-color: green;
             color: white;
@@ -17,11 +18,13 @@
             border-radius: 5px;
             font-size: 10px;
         }
+
         .links a{
             color: dimgray;
             font-style: italic;
         }
 
+        /* all three button in the same style only vertically shifted */
         #backButton {
             position: fixed; 
             bottom: 20px; 
@@ -124,11 +127,7 @@
     <div id="selectedOptions"> These are the options</div>
 
     <!-- Back button to go back to the previous page -->
-    <button id="backButton"  onclick="goBack()">
-        Back to Genre Selection
-    </button>
-
-
+    <button id="backButton"  onclick="goBack()">Back to Genre Selection</button>
 
     <script>
         function goBack() {
@@ -164,14 +163,10 @@
         });
 
          function rateMovie(movieId, rating) {
-             // You can send the movie ID and rating to the server here using fetch or another method
              console.log(`Rated movie ${movieId} with ${rating} stars`);
 
          }
 
-    </script>
-
-    <script>
         function updateRating(movieId, rating) {
             var button = document.getElementById('rating-' + movieId);
 
@@ -189,18 +184,20 @@
     <h2>Rate Movies</h2>
     <form method="POST" action="{{ url_for('selected_genre') }}">
         {% if movies %}
+            <!-- show all information about collected movies -->
             {% for movie in movies %}
                 <div class="panel panel-success" style="border: 2px solid green">
                     <div class="panel-heading"><b>{{ movie.title }}</b></div>
                     <div class="panel-body">
                         <p>
+                            <!-- show the genres -->
                             <b> Genres: </b>
                             {% for g in movie.genres %}
                                 <span class="green-box">{{ g.genre }}</span>
                             {% endfor %}
                             <br>
                         </p>
-
+                        <!-- show the tags if there are any -->
                         {% if movie.tags %}
                             <b> Tags: </b>
                             {% for t in movie.tags %}
@@ -208,7 +205,7 @@
                             {% endfor %}
                             <br><br>
                         {% endif %}
-                        <!-- Movie Links -->
+                        <!-- show the links to imdb and tmdb -->
                         <div class="links">
                             {% for link in movie.links %}
                                 <a href="{{ link.imdb }}" target="_blank">Link to review on IMDb</a>
@@ -217,6 +214,7 @@
                             {% endfor %}
                         </div>
                         <br>
+                        <!-- button to rate each movie -->
                         <div class="rating-options">
                             <b> Rate the movie: </b>
                             {% for rating in range(1, 6) %}
