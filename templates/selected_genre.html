@@ -22,24 +22,60 @@
             font-style: italic;
         }
 
-        /* Styling for the "Back" button */
         #backButton {
-            position: fixed; /* Set the button position to absolute */
-            bottom: 20px; /* Set the distance from the bottom */
-            right: 20px; /* Set the distance from the left */
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
             padding: 10px 20px;
-            background-color: #9bd4a6;
+            background-color: #388648;
             color: #ffffff;
             border: none;
             font-size: 16px;
             cursor: pointer;
             border-radius: 5px;
-            z-index: 1; /* Ensure the button is above other content */
+            z-index: 1; 
         }
 
         #backButton:hover {
             background-color: #7aa88a;
         }
+
+        #continueButton {
+            position: fixed; 
+            bottom: 20px; 
+            right: 438px; 
+            padding: 10px 20px;
+            background-color: #388648;
+            color: #ffffff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1; 
+        }
+
+        #continueButton:hover {
+            background-color: #7aa88a;
+        }
+
+        #doneButton {
+            position: fixed; 
+            bottom: 20px; 
+            right: 237px; 
+            padding: 10px 20px;
+            background-color: #388648;
+            color: #ffffff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1; 
+        }
+
+        #doneButton:hover {
+            background-color: #7aa88a;
+        }
+
         #selectedOptions {
             margin-bottom: 25px;
             font-size: 16px;
@@ -48,7 +84,7 @@
         }
         #selectedOptions span {
             font-weight: bold;
-            color: green; /* You can adjust the color to your preference */
+            color: green; 
         }
         #nomoviesfound {
             color: darkred;
@@ -56,13 +92,13 @@
         }
         .rating-options {
             display: flex;
-            gap: 2px; /* Adjust the space between buttons */
+            gap: 2px; 
             margin-left: 5px;
         }
 
         .rating-options button {
-            background-color: #4CAF50; /* Green color */
-            color: white; /* Text color */
+            background-color: #4CAF50; 
+            color: white; 
             padding: 3px 6px;
             border: none;
             cursor: pointer;
@@ -72,16 +108,16 @@
         }
 
         .rating-options button:hover {
-            background-color: #45a049; /* Hovered button color */
+            background-color: #45a049; 
         }
 
         .rated-button {
-        background-color: gray; /* Change the color to your preferred style */
+        background-color: gray; 
         }
     </style>
 
 </head>
-<!--    <h2>Movies</h2>-->
+
     <br>
 
     <!-- Display selected options from localStorage -->
@@ -96,7 +132,7 @@
 
     <script>
         function goBack() {
-            window.location.href = '/filter_genre';
+            window.location.href = "{{ url_for('filter_genre') }}";
         }
 
         // Retrieve selected options from localStorage
@@ -104,7 +140,6 @@
 
         // Display selected options in the designated area
         var selectedOptionsElement = document.getElementById("selectedOptions");
-        // selectedOptionsElement.innerHTML = 'Selected Optionsss: ' + (selectedOptions ? selectedOptions.join(', ') : 'None');
 
         if (selectedOptions && selectedOptions.length > 0) {
             var formattedOptions = selectedOptions.map(option => `<span>${option}</span>`).join(", ");
@@ -196,8 +231,8 @@
             {% for genre in genres %}
                 <input type="hidden" name="genres" value="{{ genre }}">
             {% endfor %}
-            <input type="submit" name="continue" value="Continue">
-            <input type="submit" name="done_rating" value="I'm Done Rating">
+            <input id="continueButton" type="submit" name="continue" value="Continue rating">
+            <input id="doneButton" type="submit" name="done_rating" value="Get recommendations">
         </form>
     </div>
         {% else %}
