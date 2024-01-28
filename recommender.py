@@ -5,7 +5,7 @@ from flask_user import login_required, UserManager
 from knn import recommend_movies
 import random
 
-from models import db, User, Movie, MovieGenre, MovieTags, MovieRatings, UserRatings
+from models import db, User, Movie, MovieGenre, UserRatings
 from read_data import check_and_read_data
 from flask_login import current_user
 
@@ -25,12 +25,11 @@ class ConfigClass(object):
     USER_ENABLE_USERNAME = True  # Enable username authentication
     USER_REQUIRE_RETYPE_PASSWORD = True  # Simplify register form
 
+    # set endpoints for server redirects
     USER_AFTER_REGISTER_ENDPOINT = 'home_page'
     USER_AFTER_CONFIRM_ENDPOINT = 'home_page'
     USER_AFTER_LOGIN_ENDPOINT = 'home_page'
     USER_AFTER_LOGOUT_ENDPOINT = 'home_page'
-
-    # use chown www-data movie_recommender.sqlite in console to make the database usable on server
 
 # Create Flask app
 app = Flask(__name__)
@@ -40,7 +39,7 @@ db.init_app(app)  # initialize database
 db.create_all()  # create database if necessary
 user_manager = UserManager(app, db, User)  # initialize Flask-User management
 
-
+# to create the database if it does not exist
 @app.cli.command('initdb')
 def initdb_command():
     global db
@@ -52,14 +51,13 @@ def initdb_command():
 @app.route('/')
 def home_page():
 
-    # render home.html template
     return render_template("home.html")
 
-# The Members page is only accessible to authenticated users via the @login_required decorator
+# The movies page is only accessible for atheticated users
 @app.route('/movies')
 @login_required  # User must be authenticated
 def movies_page():
-    
+
     movies = Movie.query.all()
     # choose 10 random movies to present
     movies = random.sample(movies, k=10)
@@ -75,8 +73,7 @@ def filter_genre():
                   "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War",
                   "Western"]
 
-    selected_genre_url = url_for('selected_genre')
-    return render_template("filter_genre.html", all_genres=all_genres, selected_genre_url=selected_genre_url)
+    return render_template("filter_genre.html", all_genres=all_genres)
 
 
 @app.route('/selected_genre', methods=['GET', 'POST'])
@@ -126,7 +123,7 @@ def selected_genre():
         db.session.commit()
 
         if 'done_rating' in request.form:
-            # If "I'm Done Rating" is clicked, redirect to a different page (e.g., home)
+            # If "I'm Done Rating" is clicked, redirect to the recommendations
             return redirect(url_for('recommendations_page'))
         else:
             flash('Your ratings have been submitted!', 'success')
