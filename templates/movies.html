@@ -2,6 +2,7 @@
 {% block content %}
 <head>
     <style>
+        /* style guidelines for all parts of the website */
         .green-box {
             background-color: green;
             color: white;
@@ -10,18 +11,16 @@
             border-radius: 5px;
             font-size: 10px;
         }
+        
         .links a{
             color: dimgray;
             font-style: italic;
         }
 
-        /* Add your existing styles here */
-
-        /* Styling for the "Back" button */
         #loadMoreBtn {
-            position: fixed; /* Set the button position to absolute */
-            bottom: 20px; /* Set the distance from the bottom */
-            right: 20px; /* Set the distance from the left */
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
             padding: 10px 20px;
             background-color: #9bd4a6;
             color: #ffffff;
@@ -29,7 +28,7 @@
             font-size: 16px;
             cursor: pointer;
             border-radius: 5px;
-            z-index: 1; /* Ensure the button is above other content */
+            z-index: 1; 
         }
 
         #loadMoreBtn:hover {
@@ -77,14 +76,18 @@
     {% endfor %}
 </div>
 
-<button id="loadMoreBtn" onclick="navigateToDifferentView()">Show 10 other random Movies</button>
+<button id="loadMoreBtn" onclick="reloadpage()">Show other random Movies</button>
 </div>
 
 <script>
-    function navigateToDifferentView() {
-        // navigate to itself to present different 10 movies
-        window.location.href = "{{url_for('movies_page')}}";
-    }
+     function reloadpage() {
+        // Reload the page
+        location.reload();
+
+        // Scroll to the top of the page with different versions for different browsers
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
+    };
 </script>
 </body>
 {% endblock %}
