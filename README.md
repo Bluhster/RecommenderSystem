@@ -15,7 +15,12 @@ This is the recommender system of group 78, Felix Japtok (977397), Eva Kuth (979
 - Genres and Tags included in the description of the movies
 - Link to the review on IMDb and on TMDb added for each movie
 - Multiple routes from one interface to another
-- Personalized interface with visualy pleasing formatting
+- Personalized interface with visually pleasing formatting
+
+## Known Problems
+- Slow speed when applying the genre filters due to slow sqlite database
+- On the server the recommendations page is not available and we don't know why, we thought we di all the redirect appropriately
+- non reproducable problem on the server that signs the user out sometimes when switching between views
 
 <br>
 <br>
